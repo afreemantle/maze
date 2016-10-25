@@ -3,7 +3,7 @@ type op = Add | Sub | Mult | Div | Equal | Neq |
 
 type uop = Neg | Not
 
-type typ = Int | Bool | Void
+type typ = Int | Bool | Char | Float | Void | Null
 
 type bind = typ * string
 
@@ -12,9 +12,12 @@ type expr = Literal of int
 	    | Binop of expr * op * expr
 	    | Assign of string * expr
 	    | BoolLit of bool
+	    | FloatLit of float
+	    | CharLit of char
 	    | No expr
 	    | Unop of uop *expr
 	    | Call of string * expr list
+ 	    | Null
 
 type stmt = Block of stmt list
 	    | If of expr * stmt * stmt
