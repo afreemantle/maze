@@ -40,13 +40,7 @@ rule token = parse
 | "void" {VOID}
 | "extends" {EXTENDS}
 | "class" {CLASS}
-<<<<<<< HEAD
-
-| "class" {CLASS}
-| "extends" {EXTENDS}
 | "new" {NEW}
-=======
->>>>>>> a3522e1a7014e2561f1aedfd89e863fbd009ad4d
 
 | ['0' - '9']+ as lxm { LITERAL(int_of_string lxm) }
 | ['a' - 'z' 'A' - 'Z']['a' - 'z' 'A' - 'Z' '0' - '9' '_']* as lxm { ID(lxm) }
