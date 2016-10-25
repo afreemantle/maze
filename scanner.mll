@@ -36,6 +36,7 @@ rule token = parse
 | "void" {VOID}
 | "true" {TRUE}
 | "false" {FALSE}
+| "null" {NULL}
 
 | ['0' - '9']+ as lxm { LITERAL(int_of_string lxm) }
 | ['a' - 'z' 'A' - 'Z']['a' - 'z' 'A' - 'Z' '0' - '9' '_']* as lxm { ID(lxm) }
