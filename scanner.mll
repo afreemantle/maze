@@ -37,6 +37,9 @@ rule token = parse
 | "true" {TRUE}
 | "false" {FALSE}
 | "null" {NULL}
+| "void" {VOID}
+| "extends" {EXTENDS}
+| "class" {CLASS}
 
 | "class" {CLASS}
 | "extends" {EXTENDS}
