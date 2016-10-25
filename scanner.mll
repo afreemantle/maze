@@ -38,6 +38,10 @@ rule token = parse
 | "false" {FALSE}
 | "null" {NULL}
 
+| "class" {CLASS}
+| "extends" {EXTENDS}
+| "new" {NEW}
+
 | ['0' - '9']+ as lxm { LITERAL(int_of_string lxm) }
 | ['a' - 'z' 'A' - 'Z']['a' - 'z' 'A' - 'Z' '0' - '9' '_']* as lxm { ID(lxm) }
 | eof {EOF}
