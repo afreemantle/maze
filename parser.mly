@@ -31,6 +31,16 @@
 %%
 
 
+program: decls EOF { $1 }
+
+decls:  /* nothing */  { [], [] }
+  | decls vdecl  { ($2 :: fst $1), snd $1 }
+  | decls fdecl  { fst $1, ($2 :: snd $1) }
+
+fdecl:
+  typ ID LPAREN formals_opt RPAREN LBRACE vdecl_list stmt_list RBRACE
+     { { typ = $1; fname = $2; formals = $4; locals = List.rev $7; body = List.rev $8 }}
+
 stmt_list:
    /* nothing */{ [] }
   | stmt_list stmt  { $2 :: $1 }
@@ -45,8 +55,31 @@ stmt:
  | WHILE LPAREN expr RPAREN stmt  { While($3, $5) }
 
 
+formals_opt:
+   /* nothing */ { [] }
+ | formal_list  {List.rev $1 }
+
+formal_list:
+   formal   { [$1] }
+ | formal_list COMMA formal { $3 :: $1 }
+
+formal:
+   datatype ID { Formal($1, $2) }
+
+primitive:
+   INT   {Int}
+ | FLOAT {Float}
+ | CHAR  {Char}
+ | BOOL  {Bool}
+ | VOID  {Void} 
+
+
+type_tag:
+   primitive { $1 }
+ | name   { $1 }
+
 expr:
-   LITERAL     { Literal($1) }
+   literals     { $1 }
  | TRUE        { BoolLit(true) }
  | FALSE       { BoolLit(false) }
  | ID          { Id($1) }
@@ -67,3 +100,26 @@ expr:
  | ID ASSIGN expr  { Assign($1, $3) }
  | LPAREN expr RPAREN  { $2 }
  | ID LPAREN actuals_opt RPAREN { Call($1, $3) }
+
+expr_opt:
+   /* nothing */ { Noexpr }
+ | expr  {$1}
+
+actuals_opt:
+  /* nothing */  { [] }
+ | actuals_list { List.rev $1}
+
+actuals_list:
+  expr    { [$1] }
+ | actuals_list COMMA expr { $3 :: $1 }
+
+
+literals: 
+  INT_LITERAL     { Int_Lit($1) }
+  FLOAT_LITERAL   { Float_Lit($1) }
+  CHAR_LITERAL    { Char_Lit($1) }
+  STRING_LITERAL  { String_Lit($1) }
+  TRUE		  { Boolean_Lit(true) }
+  FALSE           { Boolean_Lit(false) }
+  ID 		  { Id($1) }
+  NULL            { Null }
