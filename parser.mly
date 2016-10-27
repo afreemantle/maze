@@ -7,10 +7,11 @@
 %token INT BOOL CHAR FLOAT VOID NULL
 %token CLASS EXTENDS NEW
 
-%token <int> LITERAL
-%token <char> CHAR
-%token <float> FLOAT
+%token <int> INT_LITERAL
+%token <char> CHAR_LITERAL
+%token <float> FLOAT_LITERAL
 %token <string> ID
+%token <string> STRING_LITERAL
 %token EOF
 
 %nonassoc NOELSE
