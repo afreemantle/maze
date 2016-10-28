@@ -7,13 +7,14 @@ type typ = Int | Bool | Char | Float | Void | Null
 
 type bind = typ * string
 
-type expr = Literal of int
+type expr = Int_Lit of int
 	    | Id of string
 	    | Binop of expr * op * expr
 	    | Assign of string * expr
-	    | BoolLit of bool
-	    | FloatLit of float
-	    | CharLit of char
+	    | Bool_Lit of bool
+	    | Float_Lit of float
+	    | Char_Lit of char
+	    | String_Lit of string
 	    | No expr
 	    | Unop of uop *expr
 	    | Call of string * expr list
