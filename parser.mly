@@ -37,9 +37,20 @@ decls:  /* nothing */  { [], [] }
   | decls vdecl  { ($2 :: fst $1), snd $1 }
   | decls fdecl  { fst $1, ($2 :: snd $1) }
 
+
+/* Methods */  
+  
 fdecl:
-  typ ID LPAREN formals_opt RPAREN LBRACE vdecl_list stmt_list RBRACE
-     { { typ = $1; fname = $2; formals = $4; locals = List.rev $7; body = List.rev $8 }}
+     typ ID LPAREN formals_opt RPAREN LBRACE stmt_list RBRACE
+     {
+         {
+             name = $2;
+             returnType = $1;
+             formals = $4;
+             body = stmt_list;
+             /*overrides = false */ 
+         }
+     }
 
 
 
@@ -51,23 +62,12 @@ formal_list:
    typ ID   { [($1, $2)] }
  | formal_list COMMA typ ID { ($3, $4) :: $1 }
 
-(*formal:
-   datatype ID { Formal($1, $2) }
-*)
-
-
 typ:
    INT   {Int}
  | FLOAT {Float}
  | CHAR  {Char}
  | BOOL  {Bool}
  | VOID  {Void} 
-
-(*
-type_tag:
-   typ { $1 }
- | name   { $1 }
-*)
 
 vdecl_list: /* nothing */ { [] }
  | vdecl_list vdecl { $2 :: $1 }
