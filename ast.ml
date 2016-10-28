@@ -31,8 +31,8 @@ type stmt = Block of stmt list
 type vdecl = Field of datatype * string
 
 type func_decl = {
-	    typ     :  typ;
-	    fname   :  string;
+	    name   :  string;
+            returnTyp : datatype;
 	    formals :  bind list;
 	    locals  :  bind list;
 	    body    :  stmt list;
