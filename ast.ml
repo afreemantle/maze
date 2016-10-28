@@ -5,6 +5,8 @@ type uop = Neg | Not
 
 type typ = Int | Bool | Char | Float | Void | Null
 
+type datatype = Datatype of typ | Any
+
 type bind = typ * string
 
 type expr = Int_Lit of int
@@ -25,6 +27,8 @@ type stmt = Block of stmt list
 	    | While of expr * stmt
 	    | Expr of expr
 	    | Return of expr
+            
+type vdecl = Field of datatype * string
 
 type func_decl = {
 	    typ     :  typ;
@@ -34,4 +38,15 @@ type func_decl = {
 	    body    :  stmt list;
 }
 
-type program = bind list * func_decl list 
+type dbody = {
+        vdecls : vdecl list;
+        constructors : func_decl list;
+        methods : func_decl list;
+}
+
+type class_decl = {
+        dname : string;
+        dbody : dbody; 
+}    
+
+type program = bind list * class_decl list 
