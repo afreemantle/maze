@@ -62,17 +62,26 @@ formal_list:
    typ ID   { [($1, $2)] }
  | formal_list COMMA typ ID { ($3, $4) :: $1 }
 
+
+/* TYPES */ 
+ 
 typ:
    INT   {Int}
  | FLOAT {Float}
  | CHAR  {Char}
  | BOOL  {Bool}
- | VOID  {Void} 
+ | VOID  {Void}
+
+
+/* Variables */
 
 vdecl_list: /* nothing */ { [] }
  | vdecl_list vdecl { $2 :: $1 }
 
 vdecl: typ ID SEMI { ($1, $2) }
+
+
+/* Expressions */
 
 stmt_list:
    /* nothing */{ [] }
@@ -127,10 +136,10 @@ actuals_list:
 
 literals: 
   INT_LITERAL     { Int_Lit($1) }
-  FLOAT_LITERAL   { Float_Lit($1) }
-  CHAR_LITERAL    { Char_Lit($1) }
-  STRING_LITERAL  { String_Lit($1) }
-  TRUE		  { Bool_Lit(true) }
-  FALSE           { Bool_Lit(false) } 
-  ID 		  { Id($1) } 
-  NULL            { Null } 
+| FLOAT_LITERAL   { Float_Lit($1) }
+| CHAR_LITERAL    { Char_Lit($1) }
+| STRING_LITERAL  { String_Lit($1) }
+| TRUE		  { Bool_Lit(true) }
+| FALSE           { Bool_Lit(false) } 
+| ID 		  { Id($1) } 
+| NULL            { Null } 
