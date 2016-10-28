@@ -5,7 +5,7 @@
 %token EQ NEQ LT LEQ GT GEQ TRUE FALSE AND OR
 %token RETURN IF ELSE WHILE 
 %token INT BOOL CHAR FLOAT VOID NULL
-%token CLASS EXTENDS NEW
+%token CLASS CONSTRUCTOR EXTENDS NEW
 
 %token <int> INT_LITERAL
 %token <char> CHAR_LITERAL
@@ -33,9 +33,46 @@
 
 program: decls EOF { $1 }
 
-decls:  /* nothing */  { [], [] }
-  | decls vdecl  { ($2 :: fst $1), snd $1 }
-  | decls fdecl  { fst $1, ($2 :: snd $1) }
+/* Classes */
+
+decls:
+    decl_list   { List.rev $1}
+
+decl_list:
+    decl           { {$1} }
+  | decl_list decl { $2::$1 }
+
+decl:
+        CLASS ID LBRACE dbody RBRACE { {
+            dname = $2;
+            /*place extends here */
+            dbody = $4;
+        } }
+   /*place extends class decl here too*/
+
+dbody:
+
+    dbody fdecl { {
+        vdecls = $1.vdecls;
+        constructors = $1.constructors;
+        methods = $2 :: $1.methods;
+    } }
+  
+
+
+/* Constructors */
+
+constructor:
+    CONSTRUCTOR LPAREN formals_opt RPAREN LBRACE stmt_list RBRACE {
+        {
+            fname = Constructor;
+            /* returnType = */
+            formals = $3;
+            body = List.rev $6;
+            
+        }
+    }
+
 
 
 /* Methods */  
