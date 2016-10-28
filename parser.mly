@@ -41,6 +41,39 @@ fdecl:
   typ ID LPAREN formals_opt RPAREN LBRACE vdecl_list stmt_list RBRACE
      { { typ = $1; fname = $2; formals = $4; locals = List.rev $7; body = List.rev $8 }}
 
+
+
+formals_opt:
+   /* nothing */ { [] }
+ | formal_list  {List.rev $1 }
+
+formal_list:
+   typ ID   { [($1, $2)] }
+ | formal_list COMMA typ ID { ($3, $4) :: $1 }
+
+(*formal:
+   datatype ID { Formal($1, $2) }
+*)
+
+
+typ:
+   INT   {Int}
+ | FLOAT {Float}
+ | CHAR  {Char}
+ | BOOL  {Bool}
+ | VOID  {Void} 
+
+(*
+type_tag:
+   typ { $1 }
+ | name   { $1 }
+*)
+
+vdecl_list: /* nothing */ { [] }
+ | vdecl_list vdecl { $2 :: $1 }
+
+vdecl: typ ID SEMI { ($1, $2) }
+
 stmt_list:
    /* nothing */{ [] }
   | stmt_list stmt  { $2 :: $1 }
@@ -54,29 +87,10 @@ stmt:
  | IF LPAREN expr RPAREN stmt ELSE stmt   { If($3, $5, $7) }
  | WHILE LPAREN expr RPAREN stmt  { While($3, $5) }
 
+expr_opt:
+   /* nothing */ { Noexpr }
+ | expr  {$1}
 
-formals_opt:
-   /* nothing */ { [] }
- | formal_list  {List.rev $1 }
-
-formal_list:
-   formal   { [$1] }
- | formal_list COMMA formal { $3 :: $1 }
-
-formal:
-   datatype ID { Formal($1, $2) }
-
-primitive:
-   INT   {Int}
- | FLOAT {Float}
- | CHAR  {Char}
- | BOOL  {Bool}
- | VOID  {Void} 
-
-
-type_tag:
-   primitive { $1 }
- | name   { $1 }
 
 expr:
    literals     { $1 }
@@ -101,9 +115,6 @@ expr:
  | LPAREN expr RPAREN  { $2 }
  | ID LPAREN actuals_opt RPAREN { Call($1, $3) }
 
-expr_opt:
-   /* nothing */ { Noexpr }
- | expr  {$1}
 
 actuals_opt:
   /* nothing */  { [] }
@@ -119,7 +130,7 @@ literals:
   FLOAT_LITERAL   { Float_Lit($1) }
   CHAR_LITERAL    { Char_Lit($1) }
   STRING_LITERAL  { String_Lit($1) }
-  TRUE		  { Boolean_Lit(true) }
-  FALSE           { Boolean_Lit(false) }
-  ID 		  { Id($1) }
-  NULL            { Null }
+  TRUE		  { Bool_Lit(true) }
+  FALSE           { Bool_Lit(false) } 
+  ID 		  { Id($1) } 
+  NULL            { Null } 
