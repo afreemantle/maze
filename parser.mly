@@ -52,11 +52,23 @@ decl:
 
 dbody:
 
-    dbody fdecl { {
-        vdecls = $1.vdecls;
-        constructors = $1.constructors;
-        methods = $2 :: $1.methods;
-    } }
+        /* nothing here */ { {
+            vdecls = [];
+            constructors = [];
+            methods = [];
+        } }
+
+    |   dbody constructor { {
+            vdecls = $1.vdecls;
+            constructors = $2 :: $1.constructors;
+            methods = $1.methods;
+        } }
+
+    |   dbody fdecl { {
+            vdecls = $1.vdecls;
+            constructors = $1.constructors;
+            methods = $2 :: $1.methods;
+        } }
   
 
 
@@ -65,7 +77,7 @@ dbody:
 constructor:
     CONSTRUCTOR LPAREN formals_opt RPAREN LBRACE stmt_list RBRACE {
         {
-            fname = Constructor;
+            name = Constructor;
             /* returnType = */
             formals = $3;
             body = List.rev $6;
@@ -82,13 +94,12 @@ fdecl:
      {
          {
              name = $2;
-             returnType = $1;
+             returnTyp = $1;
              formals = $4;
              body = stmt_list;
              /*overrides = false */ 
          }
      }
-
 
 
 formals_opt:
