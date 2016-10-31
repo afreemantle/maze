@@ -76,10 +76,6 @@ dbody:
             constructors = $1.constructors;
             methods = $2 :: $1.methods;
         } }
-    
-
-  
-
 
 /* Constructors */
 
@@ -111,6 +107,16 @@ fdecl:
      }
 
 
+/* Variables */
+
+/* vdecl_list:  nothing  { [] } */
+/* | vdecl_list vdecl { $2 :: $1 } */
+
+vdecl: typ ID SEMI { ($1, $2) }
+     
+          
+/* Formals */
+
 formals_opt:
    /* nothing */ { [] }
  | formal_list  {List.rev $1 }
@@ -120,6 +126,15 @@ formal_list:
  | formal_list COMMA typ ID { ($3, $4) :: $1 }
 
 
+actuals_opt:
+  /* nothing */  { [] }
+ | actuals_list { List.rev $1}
+
+actuals_list:
+   expr    { [$1] }
+ | actuals_list COMMA expr { $3 :: $1 }
+
+ 
 /* TYPES */ 
  
 typ:
@@ -128,14 +143,6 @@ typ:
  | CHAR  {Char}
  | BOOL  {Bool}
  | VOID  {Void}
-
-
-/* Variables */
-
-/* vdecl_list:  nothing  { [] } */
-/* | vdecl_list vdecl { $2 :: $1 } */
-
-vdecl: typ ID SEMI { ($1, $2) }
 
 
 /* Expressions */
@@ -157,7 +164,6 @@ expr_opt:
    /* nothing */ { Noexpr }
  | expr  {$1}
 
-
 expr:
    literals     { $1 }
  | expr PLUS expr  { Binop($1, Add, $3) }
@@ -177,16 +183,6 @@ expr:
  | ID ASSIGN expr  { Assign($1, $3) }
  | LPAREN expr RPAREN  { $2 }
  | ID LPAREN actuals_opt RPAREN { Call($1, $3) }
-
-
-actuals_opt:
-  /* nothing */  { [] }
- | actuals_list { List.rev $1}
-
-actuals_list:
-  expr    { [$1] }
- | actuals_list COMMA expr { $3 :: $1 }
-
 
 literals: 
   INT_LITERAL     { Int_Lit($1) }
