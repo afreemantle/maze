@@ -58,17 +58,26 @@ dbody:
             methods = [];
         } }
 
-    |   dbody constructor { {
+     |   dbody vdecl { {
+            vdecls =$2 :: $1.vdecls;
+            constructors = $1.constructors;
+            methods = $1.methods;
+        } }   
+
+
+     |   dbody constructor { {
             vdecls = $1.vdecls;
             constructors = $2 :: $1.constructors;
             methods = $1.methods;
         } }
 
-    |   dbody fdecl { {
+     |   dbody fdecl { {
             vdecls = $1.vdecls;
             constructors = $1.constructors;
             methods = $2 :: $1.methods;
         } }
+    
+
   
 
 
@@ -123,8 +132,8 @@ typ:
 
 /* Variables */
 
-vdecl_list: /* nothing */ { [] }
- | vdecl_list vdecl { $2 :: $1 }
+/* vdecl_list:  nothing  { [] } */
+/* | vdecl_list vdecl { $2 :: $1 } */
 
 vdecl: typ ID SEMI { ($1, $2) }
 
