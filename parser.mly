@@ -160,10 +160,6 @@ stmt:
  | IF LPAREN expr RPAREN stmt ELSE stmt   { If($3, $5, $7) }
  | WHILE LPAREN expr RPAREN stmt  { While($3, $5) }
 
-expr_opt:
-   /* nothing */ { Noexpr }
- | expr  {$1}
-
 expr:
    literals     { $1 }
  | expr PLUS expr  { Binop($1, Add, $3) }
