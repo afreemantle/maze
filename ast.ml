@@ -19,7 +19,7 @@ type expr = Int_Lit of int
 	    | Float_Lit of float
 	    | Char_Lit of char
 	    | String_Lit of string
-	    | No expr
+	    | Noexpr
 	    | Unop of uop *expr
 	    | Call of string * expr list
  	    | Null
@@ -75,9 +75,13 @@ let string_of_uop = function
   | Not -> "!"
 
 let rec string_of_expr = function
-    Literal(l) -> string_of_int l
-  | BoolLit(true) -> "true"
-  | BoolLit(false) -> "false"
+    Int_Lit(l) -> string_of_int l
+  | Bool_Lit(true) -> "true"
+  | Bool_Lit(false) -> "false"
+  | Float_Lit(m) -> string_of_float m
+  | Char_Lit(c) -> String.make 1 c
+  | String_Lit(s) -> s
+  | Null -> ""
   | Id(s) -> s
   | Binop(e1, o, e2) ->
       string_of_expr e1 ^ " " ^ string_of_op o ^ " " ^ string_of_expr e2
@@ -101,8 +105,12 @@ let string_of_typ = function
     Int -> "int"
   | Bool -> "bool"
   | Void -> "void"
+  | Char -> "char"
+  | Float -> "float"
+  | Null -> "null"
 
 let string_of_vdecl (t, id) = string_of_typ t ^ " " ^ id ^ ";\n"
+
 
 let string_of_func_decl fdecl = (string_of_type fdecl.returnType) ^ " " ^ (fdecl.name) ^ " " ^
     "\n{\n" ^ 
@@ -110,7 +118,7 @@ let string_of_func_decl fdecl = (string_of_type fdecl.returnType) ^ " " ^ (fdecl
      String.concat "" (List.map string_of_stmt fdecl.body) ^ "}\n"  
 
 let string_of_dbody dbody = 
-  String.concat "" (List.map string_of_vdecl dbody.vdecl) ^
+  String.concat "" (List.map string_of_vdecl dbody.vdecls) ^
   String.concat "" (List.map string_of_func_decl dbody.constructor) ^
   String.concat "" (List.map string_of_func_decl dbody.fdecl)
 
@@ -118,3 +126,6 @@ let string_of_class decl =
     "class" ^ decl.dname ^ " {\n" ^ (string_of_dbody decl.dbody) ^" }\n"   
 
 let string_of_program(decls) = String.concat "\n" (List.map string_of_class decls) ^ "" 
+
+
+
