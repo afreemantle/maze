@@ -107,4 +107,11 @@ let string_of_func_decl fdecl = (string_of_type fdecl.returnType) ^ " " ^ (fdecl
      String.concat "" (List.map string_of_stmt fdecl.body) ^ "}\n"  
 
 let string_of_dbody dbody = 
-  String.concat ""
+  String.concat "" (List.map string_of_vdecl dbody.vdecl) ^
+  String.concat "" (List.map string_of_func_decl dbody.constructor) ^
+  String.concat "" (List.map string_of_func_decl dbody.fdecl)
+
+let string_of_class decl = 
+    "class" ^ decl.dname ^ " {\n" ^ (string_of_dbody decl.dbody) ^" }\n"   
+
+let string_of_program(decls) = String.concat "\n" (List.map string_of_class decls) ^ "" 
