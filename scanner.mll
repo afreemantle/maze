@@ -2,8 +2,11 @@
 
 let alpha = ['a' - 'z' 'A' - 'Z']
 let digit = ['0' - '9']
+let escape = '\\' ['\\' ''' '"' 'n' 'r' 't']
+let ascii = ([' '-'!' '#'-'[' ']'-'~'])
 let float = (digit+) ['.'] digit+
 let int = digit+
+let char = ''' ( ascii | digit ) '''
 let id = alpha(alpha | digit | '_')*
 
 rule token = parse
@@ -57,6 +60,7 @@ rule token = parse
 
 | int as lxm  { INT_LITERAL(int_of_string) }
 | float as lxm   {FLOAT_LITERAL(float_of_string lxm) }
+| char as lxm  {CHAR_LITERAL(String.get lxm 1) }
 | id as lxm  { ID(lxm) } 
 | eof   {EOF}
 
