@@ -5,6 +5,8 @@ type uop = Neg | Not
 
 type typ = Int | Bool | Char | Float | Void | Null
 
+type extends = NoParent | Parent of string
+
 type datatype = Datatype of typ | Any
 
 type bind = typ * string
@@ -47,6 +49,7 @@ type dbody = {
 type class_decl = {
         dname : string;
         dbody : dbody; 
+	extends : extends;
 }    
 
 type program = bind list * class_decl list
