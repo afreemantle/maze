@@ -45,11 +45,15 @@ decl_list:
 decl:
         CLASS ID LBRACE dbody RBRACE { {
             dname = $2;
-            /*place extends here */
+            extends = NoParent;
             dbody = $4;
         } }
-   /*place extends class decl here too*/
-
+       
+       | CLASS ID EXTENDS ID LBRACE dbody RBRACE { {
+		dname = $2;
+		extends = Parent($4);
+		dbody = $6;
+       } }
 dbody:
 
         /* nothing here */ { {
@@ -179,6 +183,7 @@ expr:
  | ID ASSIGN expr  { Assign($1, $3) }
  | LPAREN expr RPAREN  { $2 }
  | ID LPAREN actuals_opt RPAREN { Call($1, $3) }
+ | NEW ID LPAREN actuals_opt RPAREN { ObjectCreate($2, $4) }
 
 literals: 
   INT_LITERAL     { Int_Lit($1) }
