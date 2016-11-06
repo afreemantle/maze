@@ -110,9 +110,9 @@ let string_of_typ = function
   | Null -> "null"
 
 let string_of_vdecl (t, id) = string_of_typ t ^ " " ^ id ^ ";\n"
+(*
 
-
-let string_of_func_decl fdecl = (string_of_type fdecl.returnType) ^ " " ^ (fdecl.name) ^ " " ^
+let string_of_func_decl fdecl = (string_of_typ fdecl.datatype) ^ " " ^ (fdecl.name) ^ " " ^
     "\n{\n" ^ 
      String.concat "," (List.map string_of_vdecl fdecl.formals) ^
      String.concat "" (List.map string_of_stmt fdecl.body) ^ "}\n"  
@@ -127,5 +127,5 @@ let string_of_class decl =
 
 let string_of_program(decls) = String.concat "\n" (List.map string_of_class decls) ^ "" 
 
-
+*)
 
