@@ -39,7 +39,7 @@ decls:
     decl_list   { List.rev $1}
 
 decl_list:
-    decl           { {$1} }
+    decl           { [$1] }
   | decl_list decl { $2::$1 }
 
 decl:
@@ -142,11 +142,11 @@ actuals_list:
 /* TYPES */ 
  
 typ:
-   INT   {Int}
- | FLOAT {Float}
- | CHAR  {Char}
- | BOOL  {Bool}
- | VOID  {Void}
+   INT   { Int }
+ | FLOAT { Float }
+ | CHAR  { Char }
+ | BOOL  { Bool }
+ | VOID  { Void }
 
 
 /* Expressions */
