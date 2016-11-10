@@ -103,9 +103,9 @@ fdecl:
      {
          {
              name = $2;
-             returnTyp = $1;
+             typ = $1;
              formals = $4;
-             body = stmt_list;
+             body = List.rev $8; (*stmt_lisit; *)
              /*overrides = false */ 
          }
      }
