@@ -1,4 +1,10 @@
-{ open Parser }
+{ open Parser 
+
+  let lineno = ref 1
+  let depth = ref 0
+  let filename = ref ""
+  let unescape s = Scanf.sscanf ("\"" ^ s ^ "\"") "%S%!" (fun x->x)
+}
 
 let alpha = ['a' - 'z' 'A' - 'Z']
 let digit = ['0' - '9']
@@ -7,6 +13,7 @@ let ascii = ([' '-'!' '#'-'[' ']'-'~'])
 let float = (digit+) ['.'] digit+
 let int = digit+
 let char = ''' ( ascii | digit ) '''
+let string = '"' ( (ascii | escape)* as s) '"'
 let id = alpha(alpha | digit | '_')*
 
 rule token = parse
@@ -59,10 +66,11 @@ rule token = parse
 *)
 
 | int as lxm  { INT_LITERAL(int_of_string) }
-| float as lxm   {FLOAT_LITERAL(float_of_string lxm) }
-| char as lxm  {CHAR_LITERAL(String.get lxm 1) }
-| id as lxm  { ID(lxm) } 
-| eof   {EOF}
+| float as lxm   { FLOAT_LITERAL(float_of_string lxm) }
+| char as lxm  { CHAR_LITERAL(String.get lxm 1) }
+| string   { STRING_LITERAL(unescape s) }
+| id as lxm  { ID(lxm) } i
+| eof   { EOF }
 
 and comment = parse
     "*)" {token lexbuf}
