@@ -9,7 +9,7 @@ type extends = NoParent | Parent of string
 
 type datatype = Datatype of typ | Any
 
-type bind = typ * string
+type formal = Formal of datatype * string | Many of datatype
 
 type expr = Int_Lit of int
 	    | Id of string
@@ -35,8 +35,8 @@ type vdecl = Field of datatype * string
 type func_decl = {
 	    name   :  string;
             returnTyp : datatype;
-	    formals :  bind list;
-	    locals  :  bind list;
+	    formals :  formal list;
+	   (* locals  :  bind list;*)
 	    body    :  stmt list;
 }
 
@@ -52,7 +52,7 @@ type class_decl = {
 	extends : extends;
 }    
 
-type program = bind list * class_decl list
+type program = formal list * class_decl list
 
 (* Pretty-printing functions *)
 
@@ -109,23 +109,34 @@ let string_of_typ = function
   | Float -> "float"
   | Null -> "null"
 
-let string_of_vdecl (t, id) = string_of_typ t ^ " " ^ id ^ ";\n"
-(*
 
-let string_of_func_decl fdecl = (string_of_typ fdecl.datatype) ^ " " ^ (fdecl.name) ^ " " ^
+let string_of_datatype = function
+Datatype(p) -> (string_of_typ p)
+| Any -> "Any"
+
+
+let string_of_vdecl = function
+Field(t, id) -> (string_of_datatype t) ^ " " ^ id ^ ";\n"
+
+let string_of_formal = function
+Formal(d, s) -> (string_of_datatype d) ^ " " ^ s
+| _ -> ""
+
+
+let string_of_func_decl fdecl = (string_of_datatype fdecl.returnTyp) ^ " " ^ (fdecl.name) ^ " " ^
     "\n{\n" ^ 
-     String.concat "," (List.map string_of_vdecl fdecl.formals) ^
+     String.concat "," (List.map string_of_formal fdecl.formals) ^
      String.concat "" (List.map string_of_stmt fdecl.body) ^ "}\n"  
 
 let string_of_dbody dbody = 
   String.concat "" (List.map string_of_vdecl dbody.vdecls) ^
-  String.concat "" (List.map string_of_func_decl dbody.constructor) ^
-  String.concat "" (List.map string_of_func_decl dbody.fdecl)
+  String.concat "" (List.map string_of_func_decl dbody.constructors) ^
+  String.concat "" (List.map string_of_func_decl dbody.methods)
 
 let string_of_class decl = 
     "class" ^ decl.dname ^ " {\n" ^ (string_of_dbody decl.dbody) ^" }\n"   
 
 let string_of_program(decls) = String.concat "\n" (List.map string_of_class decls) ^ "" 
 
-*)
+
 

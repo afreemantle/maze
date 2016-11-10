@@ -40,17 +40,17 @@ let check (globals, functions) =
 
   (**** Checking Functions ****)
 
-  if List.mem "print" (List.map (fun fd -> fd.fname) functions)
+  if List.mem "print" (List.map (fun fd -> fd.dname) functions)
   then raise (Failure ("function print may not be defined")) else ();
 
   report_duplicate (fun n -> "duplicate function " ^ n)
-    (List.map (fun fd -> fd.fname) functions);
+    (List.map (fun fd -> fd.dname) functions);
 
   (* Function declaration for a named function *)
   let built_in_decls =  StringMap.add "print"
-     { typ = Void; fname = "print"; formals = [(Int, "x")];
+     { returnTyp = Void; name = "print"; formals = [(Int, "x")];
        locals = []; body = [] } (StringMap.singleton "printb"
-     { typ = Void; fname = "printb"; formals = [(Bool, "x")];
+     { returnTyp = Void; name = "printb"; formals = [(Bool, "x")];
        locals = []; body = [] })
    in
      
