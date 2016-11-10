@@ -105,7 +105,7 @@ fdecl:
              name = $2;
              typ = $1;
              formals = $4;
-             body = List.rev $8; (*stmt_lisit; *)
+             body = List.rev $8; (*stmt_list; *)
              /*overrides = false */ 
          }
      }
