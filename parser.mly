@@ -97,12 +97,15 @@ constructor:
 
 
 /* Methods */  
+
+fname:
+    ID { $1 }
   
 fdecl:
      typ ID LPAREN formals_opt RPAREN LBRACE stmt_list RBRACE
      {
          {
-             fname = $2;
+             fname = FName($2);
              typ = $1;
              formals = $4;
              body = List.rev $8; (*stmt_list; *)
