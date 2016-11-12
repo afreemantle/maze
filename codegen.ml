@@ -1,23 +1,29 @@
+open Llvm
+
+
 module L = Llvm
 module A = Ast
 
-module StringMap = Map.Make(String)
+exception Error of string
 
-let translate (globals, functions) = 
-    let context = L.global_context () in
-    let the_module = L.create_module context "Maze"
-    and t_int = L.i32_type context
-    and t_bool = L.i1_type context
-    (* and t_char = L.char_type context *)
-    (* and t_float = L.float_type context *)
-    and t_void = L.void_type context 
-    (* and t_null = L.null_type contxt in *)
+let context = global_context ()
+let the_module  = create_module context "maze codegen"
+let builder = builder context
+let named_values:(string, llvalue) Hashtbl.t = Hashtbl.create 40
 
 
-    let ltype_of_type = function
-        A.Int
-      | A.Bool
-      | A.Char
-      | A.Float
-      | A.Void
-      | A.Null
+let integer_t = integer_type context;;
+let bool_t = i1_type context;;
+let char_t = i8_type context;;
+let float_t = double_type context;; 
+let void_t = void_type context;; 
+let null_t = const_null context;;  
+
+
+let rec codegen_expr = function 
+    | A.Int n -> ...
+    | A.Bool bl -> ...
+    | A.Char ch -> ...
+    | A.Float fl -> ...
+    | A.Void vd -> ...
+    | A.Null nl -> ...
