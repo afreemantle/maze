@@ -9,7 +9,7 @@ type extends = NoParent | Parent of string
 
 type datatype = Datatype of typ | Any
 
-type fname = Constructor | Fname of string
+type fname = Constructor | FName of string
 
 type formal = Formal of datatype * string | Many of datatype
 
@@ -112,7 +112,8 @@ let string_of_typ = function
   | Null -> "null"
 
 let string_of_fname = function
-    FName(s) -> s
+     Constructor -> "constructor"
+|    FName(s) -> s
 
 let string_of_datatype = function
 Datatype(p) -> (string_of_typ p)
@@ -127,7 +128,7 @@ Formal(d, s) -> (string_of_datatype d) ^ " " ^ s
 | _ -> ""
 
 
-let string_of_func_decl fdecl = (string_of_datatype fdecl.returnTyp) ^ " " ^ (fdecl.name) ^ " " ^
+let string_of_func_decl fdecl = (string_of_datatype fdecl.returnTyp) ^ " " ^ (string_of_fname fdecl.fname) ^ " " ^
     "\n{\n" ^ 
      String.concat "," (List.map string_of_formal fdecl.formals) ^
      String.concat "" (List.map string_of_stmt fdecl.body) ^ "}\n"  
