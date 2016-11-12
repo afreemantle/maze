@@ -86,7 +86,7 @@ dbody:
 constructor:
     CONSTRUCTOR LPAREN formals_opt RPAREN LBRACE stmt_list RBRACE {
         {
-            name = Constructor;
+            fname = Constructor;
             /* returnType = */
             formals = $3;
             body = List.rev $6;
@@ -102,7 +102,7 @@ fdecl:
      typ ID LPAREN formals_opt RPAREN LBRACE stmt_list RBRACE
      {
          {
-             name = $2;
+             fname = $2;
              typ = $1;
              formals = $4;
              body = List.rev $8; (*stmt_list; *)

@@ -9,6 +9,8 @@ type extends = NoParent | Parent of string
 
 type datatype = Datatype of typ | Any
 
+type fname = Constructor | Fname of string
+
 type formal = Formal of datatype * string | Many of datatype
 
 type expr = Int_Lit of int
@@ -33,7 +35,7 @@ type stmt = Block of stmt list
 type vdecl = Field of datatype * string
 
 type func_decl = {
-	    name   :  string;
+	    fname   :  fname;
             returnTyp : datatype;
 	    formals :  formal list;
 	   (* locals  :  bind list;*)
@@ -109,6 +111,8 @@ let string_of_typ = function
   | Float -> "float"
   | Null -> "null"
 
+let string_of_fname = function
+    FName(s) -> s
 
 let string_of_datatype = function
 Datatype(p) -> (string_of_typ p)
