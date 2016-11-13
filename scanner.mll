@@ -65,11 +65,11 @@ rule token = parse
 | _ as char { raise (Failure("illegal character " ^ Char.escaped char)) } 
 *)
 
-| int as lxm  { INT_LITERAL(int_of_string) }
+| int as lxm  { INT_LITERAL(int_of_string lxm) }
 | float as lxm   { FLOAT_LITERAL(float_of_string lxm) }
 | char as lxm  { CHAR_LITERAL(String.get lxm 1) }
 | string   { STRING_LITERAL(unescape s) }
-| id as lxm  { ID(lxm) } i
+| id as lxm  { ID(lxm) } 
 | eof   { EOF }
 
 and comment = parse

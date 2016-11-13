@@ -117,7 +117,7 @@ fdecl:
 /* vdecl_list:  nothing  { [] } */
 /* | vdecl_list vdecl { $2 :: $1 } */
 
-vdecl: typ ID SEMI { ($1, $2) }
+vdecl: typ ID SEMI { Field($1, $2) }
      
           
 /* Formals */
@@ -127,8 +127,8 @@ formals_opt:
  | formal_list  {List.rev $1 }
 
 formal_list:
-   typ ID   { [($1, $2)] }
- | formal_list COMMA typ ID { ($3, $4) :: $1 }
+   typ ID   { [Formal($1, $2)] }
+ | formal_list COMMA typ ID { Formal($3, $4) :: $1 }
 
 
 actuals_opt:
@@ -143,11 +143,11 @@ actuals_list:
 /* TYPES */ 
  
 typ:
-   INT   { Int }
- | FLOAT { Float }
- | CHAR  { Char }
- | BOOL  { Bool }
- | VOID  { Void }
+   INT   { Datatype(Int) }
+ | FLOAT { Datatype(Float) }
+ | CHAR  { Datatype(Char) }
+ | BOOL  { Datatype(Bool) }
+ | VOID  { Datatype(Void) }
 
 
 /* Expressions */
@@ -185,7 +185,6 @@ expr:
  | ID ASSIGN expr  { Assign($1, $3) }
  | LPAREN expr RPAREN  { $2 }
  | ID LPAREN actuals_opt RPAREN { Call($1, $3) }
- | NEW ID LPAREN actuals_opt RPAREN { ObjectCreate($2, $4) }
 
 literals: 
   INT_LITERAL     { Int_Lit($1) }
