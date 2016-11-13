@@ -117,6 +117,7 @@ and check_assign env e1 e2 =
 
 
 and check_unop env op e =
+	let check_num_unop t = function
 		Sub  -> t
 	|	_  ->  raise (Failure ( "check_unop env"))
 	in
@@ -126,7 +127,7 @@ and check_unop env op e =
 	in
 	
         let se, env = expr_sexpr env e in
-	let se, env = expr_env env e in
+	let se, env = expr_sexpr env e in
 	let t = type_expr se in
 	match t with 
 		Datatype(Int)
