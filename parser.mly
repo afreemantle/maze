@@ -102,7 +102,7 @@ fname:
     ID { $1 }
   
 fdecl:
-     typ ID LPAREN formals_opt RPAREN LBRACE stmt_list RBRACE
+     typ fname LPAREN formals_opt RPAREN LBRACE stmt_list RBRACE
      {
          {
              fname = FName($2);
