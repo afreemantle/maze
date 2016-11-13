@@ -102,7 +102,7 @@ let rec get_ID_type env s =
 	with | Not_found -> raise (Failure ("get ID type failure"))
 
 
-let check_assign env e1 e2 = 
+and check_assign env e1 e2 = 
 	let se1, env = expr_sexpr env e1 in
 	let se2, env = expr_sexpr env e2 in 
 	let type1 = type_expr se1 in
@@ -115,7 +115,8 @@ let check_assign env e1 e2 =
 	| _ ->
 	if type1 = type2 then SAssign(se1, se2, type1) else raise (Failure (" check_assign env e1 e2")) 
 
-let check_unop env op e =
+
+and check_unop env op e =
 	let check_num_unop t = function
 		Sub  -> t
 	|	_  ->  raise (Failure ( "check_unop env"))
@@ -124,7 +125,7 @@ let check_unop env op e =
 		Not  ->  Datatype(Bool)
 	|	_   ->  raise (Failure ("check_bool_unop"))
 	in
-	let se, env = expr_env env e in
+	let se, env = expr_sexpr env e in
 	let t = type_expr se in
 	match t with 
 		Datatype(Int)
@@ -133,7 +134,7 @@ let check_unop env op e =
 	|	_  -> raise( Failure ("check_unop_match"))
 
 
-let check_binop env e1 op e2 = 
+and check_binop env e1 op e2 = 
 	let se1, env = type_expr env e1 in
 	let se2, env = type_expr env e2 in
 	let type1 =  type_expr se1 in
@@ -146,7 +147,7 @@ let check_binop env e1 op e2 =
 	| _ -> raise (Failure (" check_binop env"))
 
 
-let expr_sexpr env = function
+and expr_sexpr env = function
 	Int_Lit i   ->  SInt_Lit(i), env
 |	Bool_Lit b  ->  SBool_Lit(b), env
 |	Float_Lit f  ->  SFloat_Lit(f), env
@@ -160,7 +161,7 @@ let expr_sexpr env = function
 |	Binop(e1, op, e2)   ->  check_binop env e1 op e2, env 
 
 
-let type_expr = function
+and type_expr = function
 	SInt_Lit(_)  ->  Datatype(Int)
 |	SBool_Lit(_) ->  Datatype(Bool)
 |	SFloat_Lit(_) -> Datatype(Float)
@@ -175,7 +176,7 @@ let type_expr = function
 | 	SNull		-> Datatype(Null)
 
 
-let exprl_to_sexprl env el = 
+and exprl_to_sexprl env el = 
 	let env_ref = ref(env) in
 	let rec helper = function
 		head :: tail ->
