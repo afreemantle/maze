@@ -117,7 +117,6 @@ and check_assign env e1 e2 =
 
 
 and check_unop env op e =
-	let check_num_unop t = function
 		Sub  -> t
 	|	_  ->  raise (Failure ( "check_unop env"))
 	in
@@ -125,7 +124,9 @@ and check_unop env op e =
 		Not  ->  Datatype(Bool)
 	|	_   ->  raise (Failure ("check_bool_unop"))
 	in
-	let se, env = expr_sexpr env e in
+	
+        let se, env = expr_sexpr env e in
+	let se, env = expr_env env e in
 	let t = type_expr se in
 	match t with 
 		Datatype(Int)
@@ -170,7 +171,7 @@ and type_expr = function
 |	SId(_,d)  -> d
 |	SBinop(_,_,_,d)  -> d
 |	SAssign(_,_,d)   -> d
-|	Noexpr		-> Datatype(Void)
+|	SNoexpr		-> Datatype(Void)
 |	SUnop(_,_,d)     -> d
 |	SCall(_,_,d,_)   -> d
 | 	SNull		-> Datatype(Null)
