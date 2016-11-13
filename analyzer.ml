@@ -126,7 +126,6 @@ and check_unop env op e =
 	|	_   ->  raise (Failure ("check_bool_unop"))
 	in
 	
-        let se, env = expr_sexpr env e in
 	let se, env = expr_sexpr env e in
 	let t = type_expr se in
 	match t with 
@@ -137,8 +136,8 @@ and check_unop env op e =
 
 
 and check_binop env e1 op e2 = 
-	let se1, env = type_expr env e1 in
-	let se2, env = type_expr env e2 in
+	let se1, env = expr_sexpr env e1 in
+	let se2, env = expr_sexpr env e2 in
 	let type1 =  type_expr se1 in
 	let type2 = type_expr se2 in
 	match op with
