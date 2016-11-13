@@ -156,7 +156,7 @@ and expr_sexpr env = function
 |	Null   ->   SNull, env
 | 	Noexpr  ->   SNoexpr, env
 | 	Call(s, el)  ->  check_call_type env false env s el, env
-| 	Assign(e1,e2)  ->  check_assign env e1 e2, env
+| 	Assign(e1, e2)  ->  check_assign env e1 e2, env
 |	Unop(op, e)  ->  check_unop env op e, env
 |	Binop(e1, op, e2)   ->  check_binop env e1 op e2, env 
 
@@ -170,7 +170,7 @@ and type_expr = function
 |	SId(_,d)  -> d
 |	SBinop(_,_,_,d)  -> d
 |	SAssign(_,_,d)   -> d
-|	SNoexpr		-> Datatype(Void)
+|	Noexpr		-> Datatype(Void)
 |	SUnop(_,_,d)     -> d
 |	SCall(_,_,d,_)   -> d
 | 	SNull		-> Datatype(Null)
