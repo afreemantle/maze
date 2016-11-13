@@ -1,8 +1,14 @@
 open Ast
 
-type sexpr = 
-	SId of string * datatype
+type sexpr =
+	SInt_Lit of int
+|	SFloat_Lit of float
+|	SChar_Lit of char
+|	SBool_Lit of bool 
+|	SId of string * datatype
 |	SBinop of sexpr * op * sexpr * datatype
 |	SAssign of sexpr * sexpr * datatype
 |	SCall of string * sexpr list * datatype * int
 |	SUnop of op * sexpr * datatype
+|	SNull 
+|	SNoexpr
