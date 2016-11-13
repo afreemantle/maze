@@ -36,7 +36,7 @@ type vdecl = Field of datatype * string
 
 type func_decl = {
 	    fname   :  fname;
-            returnTyp : datatype;
+            returnType : datatype;
 	    formals :  formal list;
 	   (* locals  :  bind list;*)
 	    body    :  stmt list;
@@ -54,7 +54,7 @@ type class_decl = {
 	extends : extends;
 }    
 
-type program = formal list * class_decl list
+type program = class_decl list
 
 (* Pretty-printing functions *)
 
@@ -128,7 +128,7 @@ Formal(d, s) -> (string_of_datatype d) ^ " " ^ s
 | _ -> ""
 
 
-let string_of_func_decl fdecl = (string_of_datatype fdecl.returnTyp) ^ " " ^ (string_of_fname fdecl.fname) ^ " " ^
+let string_of_func_decl fdecl = (string_of_datatype fdecl.returnType) ^ " " ^ (string_of_fname fdecl.fname) ^ " " ^
     "\n{\n" ^ 
      String.concat "," (List.map string_of_formal fdecl.formals) ^
      String.concat "" (List.map string_of_stmt fdecl.body) ^ "}\n"  

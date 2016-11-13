@@ -36,13 +36,13 @@ program: decls EOF { $1 }
 /* Classes */
 
 decls:
-    decl_list   { List.rev $1}
+    class_decl_list   { List.rev $1}
 
-decl_list:
-    decl           { [$1] }
-  | decl_list decl { $2::$1 }
+class_decl_list:
+    class_decl           { [$1] }
+  | class_decl_list class_decl { $2::$1 }
 
-decl:
+class_decl:
         CLASS ID LBRACE dbody RBRACE { {
             dname = $2;
             extends = NoParent;
@@ -87,10 +87,9 @@ constructor:
     CONSTRUCTOR LPAREN formals_opt RPAREN LBRACE stmt_list RBRACE {
         {
             fname = Constructor;
-            /* returnType = */
             formals = $3;
             body = List.rev $6;
-            
+            returnType = Any
         }
     }
 
@@ -102,14 +101,13 @@ fname:
     ID { $1 }
   
 fdecl:
-     typ ID LPAREN formals_opt RPAREN LBRACE stmt_list RBRACE
+     typ fname LPAREN formals_opt RPAREN LBRACE stmt_list RBRACE
      {
          {
              fname = FName($2);
-             typ = $1;
+             returnType = $1;
              formals = $4;
-             body = List.rev $8; (*stmt_list; *)
-             /*overrides = false */ 
+             body = List.rev $7; (*stmt_list; *)
          }
      }
 
