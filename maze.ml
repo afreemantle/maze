@@ -1,4 +1,4 @@
-type action = AST | Help (*LLVM_IR | Compile*)
+type action = Ast | Help (*LLVM_IR | Compile*)
 
 let help_string = (
     "Usage: maze [option] <source files>\n" ^
@@ -10,7 +10,7 @@ let help_string = (
 
 let _ =  
     let action = if Array.length Sys.argv > 1 then
-        List.assoc Sys.argv.(1) [ ("-a", AST); 
+        List.assoc Sys.argv.(1) [ ("-a", Ast); 
                                   ("-h", Help) ] 
                                  (*
                                   ("-l", LLVM_IR)  Generate LLVM, don't check 
