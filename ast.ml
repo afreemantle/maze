@@ -7,7 +7,7 @@ type typ = Int | Bool | Char | Float | Void | Null
 
 type extends = NoParent | Parent of string
 
-type datatype = Datatype of typ | Any
+type datatype = Datatype of typ | Arraytype of typ * int | Any
 
 type fname = Constructor | FName of string
 
@@ -21,6 +21,9 @@ type expr = Int_Lit of int
 	    | Float_Lit of float
 	    | Char_Lit of char
 	    | String_Lit of string
+	    | ArrayTyp of expr list
+	    | ArrayCreate of datatype * expr list
+	    | Array Access of expr * expr
 	    | Noexpr
 	    | Unop of uop *expr
 	    | Call of string * expr list
