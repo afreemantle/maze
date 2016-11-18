@@ -23,7 +23,7 @@ type expr = Int_Lit of int
 	    | String_Lit of string
 	    | ArrayTyp of expr list
 	    | ArrayCreate of datatype * expr list
-	    | Array Access of expr * expr
+	    | ArrayAccess of expr * expr
 	    | Noexpr
 	    | Unop of uop *expr
 	    | Call of string * expr list
@@ -79,7 +79,33 @@ let string_of_uop = function
     Neg -> "-"
   | Not -> "!"
 
-let rec string_of_expr = function
+let string_of_typ = function
+    Int -> "int"
+  | Bool -> "bool"
+  | Void -> "void"
+  | Char -> "char"
+  | Float -> "float"
+  | Null -> "null"
+
+
+let string_of_datatype = function
+  Arraytype(p, i) -> (string_of_typ p)
+| Datatype(p) -> (string_of_typ p)
+| Any -> "Any"
+
+
+let rec string_of_bracket = function
+  [] -> ""
+| head :: tail -> "[" ^ (string_of_expr head) ^ "]" ^ (string_of_bracket tail)
+
+and string_of_array_typ = function
+  [] -> ""
+| [last] -> string_of_expr last
+| head :: tail -> string_of_expr head ^ ", " ^ string_of_array_typ tail
+
+
+
+and string_of_expr = function
     Int_Lit(l) -> string_of_int l
   | Bool_Lit(true) -> "true"
   | Bool_Lit(false) -> "false"
@@ -95,6 +121,10 @@ let rec string_of_expr = function
   | Call(f, el) ->
       f ^ "(" ^ String.concat ", " (List.map string_of_expr el) ^ ")"
   | Noexpr -> ""
+  | ArrayTyp(e1) -> "|" ^ string_of_array_typ e1 ^ "|"
+  | ArrayCreate(d, e1) -> "new " ^ string_of_datatype d
+  | ArrayAccess(e, e1) -> string_of_expr e
+
 
 let rec string_of_stmt = function
     Block(stmts) ->
@@ -106,21 +136,10 @@ let rec string_of_stmt = function
       string_of_stmt s1 ^ "else\n" ^ string_of_stmt s2
   | While(e, s) -> "while (" ^ string_of_expr e ^ ") " ^ string_of_stmt s
 
-let string_of_typ = function
-    Int -> "int"
-  | Bool -> "bool"
-  | Void -> "void"
-  | Char -> "char"
-  | Float -> "float"
-  | Null -> "null"
 
 let string_of_fname = function
      Constructor -> "constructor"
 |    FName(s) -> s
-
-let string_of_datatype = function
-Datatype(p) -> (string_of_typ p)
-| Any -> "Any"
 
 
 let string_of_vdecl = function
