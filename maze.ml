@@ -28,13 +28,14 @@ let _ =
         else if Array.length Sys.argv = 2 then check_option (Sys.argv.(1))
         else if Array.length Sys.argv = 3 then check_action Sys.argv.(1), (Sys.argv.(2)) 
         else Error, "." in
-        let in_channel = open_in filename in
-        let lexbuf = Lexing.from_channel in_channel in
-        let program = Parser.program Scanner.token lexbuf in
+
+let in_channel = open_in filename in
+let lexbuf = Lexing.from_channel in_channel in
+let program = Parser.program Scanner.token lexbuf in
 
     match action with 
         Help -> print_string help_string 
-      | Ast -> print_string ast_holder
+      | Ast -> print_string (Ast.string_of_program program)
       | Error -> print_string invalid_arg_string
 
 
