@@ -14,24 +14,23 @@ let invalid_arg_string = ("Invalid Arguments\n")
 let ast_holder = ("Ast would be printing\n")
 
 let check_option = function
-     "-h" -> Help, ""
-    | _ as s -> Error, ""
+     "-h" -> Help, "."
+    | _ as s -> Error, "."
 
 let check_action = function  
       "-h" -> Help 
     | "-a" -> Ast 
-    | _ as s -> Error
+    | _ as s -> Error    
 
 let _ =  
     let action, filename = 
-        if Array.length Sys.argv = 1 then Help, "" 
+        if Array.length Sys.argv = 1 then Help, "." 
         else if Array.length Sys.argv = 2 then check_option (Sys.argv.(1))
-        else if Array.length Sys.argv = 3 then check_action Sys.argv.(1), (Sys.argv.(2))
-        else Error, ""
-    in
-    let in_channel = open_in filename in
-    let lexbuf = Lexing.from_channel in_channel in  
-    let program = Parser.program Scanner.token lexbuf in
+        else if Array.length Sys.argv = 3 then check_action Sys.argv.(1), (Sys.argv.(2)) 
+        else Error, "." in
+        let in_channel = open_in filename in
+        let lexbuf = Lexing.from_channel in_channel in
+        let program = Parser.program Scanner.token lexbuf in
 
     match action with 
         Help -> print_string help_string 
