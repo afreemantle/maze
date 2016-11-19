@@ -1,5 +1,3 @@
-open Filepath
-
 type action = Ast | Help | Error (*LLVM_IR | Compile*)
 
 let help_string = (
@@ -31,10 +29,9 @@ let _ =
         else if Array.length Sys.argv = 3 then check_action Sys.argv.(1), Sys.argv.(2)
         else Error, ""
     in
-    let filename = Filepath.realpath filename in
-    let file_in = fun () -> open_in filename in
-    let lexbuf = fun () -> Lexing.from_channel (file_in ()) in
-    
+    let lexbuf = Lexing.from_channel filename in  
+    let program = Parser.program Scanner.token lexbuf in
+
     match action with 
         Help -> print_string help_string 
       | Ast -> print_string ast_holder
