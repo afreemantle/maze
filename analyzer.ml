@@ -153,6 +153,7 @@ and expr_sexpr env = function
 |	Bool_Lit b  ->  SBool_Lit(b), env
 |	Float_Lit f  ->  SFloat_Lit(f), env
 |	Char_Lit c   -> SChar_Lit(c), env
+|	String_Lit  ->  SString_Lit(s), env
 |	Id s   ->   SId(s, get_ID_type env s), env
 |	Null   ->   SNull, env
 | 	Noexpr  ->   SNoexpr, env
@@ -166,7 +167,7 @@ and type_expr = function
 	SInt_Lit(_)  ->  Datatype(Int)
 |	SBool_Lit(_) ->  Datatype(Bool)
 |	SFloat_Lit(_) -> Datatype(Float)
-(*| 	String_Lit(_)  ->  ArrayType(Char, 1) *)
+| 	String_Lit(_)  ->  ArrayType(Char, 1) 
 |	SChar_Lit(_)  ->   Datatype(Char) 
 |	SId(_,d)  -> d
 |	SBinop(_,_,_,d)  -> d
