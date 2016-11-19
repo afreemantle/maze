@@ -1,9 +1,3 @@
-.PHONY : clean
-clean: 
-	ocamlbuild -clean
-	rm -rf testall.log *.diff maze scanner.ml parser.ml parser.mli
-	rm -rf *.cmx *.cmi *.cmo *.o a.out
-
 OBJS = ast.cmx parser.cmx scanner.cmx maze.cmx
 
 maze : $(OBJS)
@@ -35,6 +29,12 @@ scanner.cmo : parser.cmi
 scanner.cmx : parser.cmx
 parser.cmi : ast.cmo
 
+
+.PHONY : clean
+clean: 
+	ocamlbuild -clean
+	rm -rf testall.log *.diff maze scanner.ml parser.ml parser.mli
+	rm -rf *.cmx *.cmi *.cmo *.o a.out
 
 
 
