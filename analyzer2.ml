@@ -18,4 +18,8 @@ let check classes =
 
   *)
 
-  List.sort compare classes
+  let print_dname someClass =
+      print_string someClass.dname
+  in
+
+  List.iter print_dname classes
