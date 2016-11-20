@@ -49,6 +49,7 @@ rule token = parse
 | "int" {INT}
 | "bool" {BOOL}
 | "char" {CHAR}
+| "string" {STRING}
 | "void" {VOID}
 | "true" {TRUE}
 | "false" {FALSE}

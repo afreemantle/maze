@@ -3,7 +3,7 @@ type op = Add | Sub | Mult | Div | Equal | Neq |
 
 type uop = Neg | Not
 
-type typ = Int | Bool | Char | Float | Void | Null
+type typ = Int | Bool | Char | String| Float | Void | Null
 
 type extends = NoParent | Parent of string
 

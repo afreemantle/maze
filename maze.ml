@@ -11,8 +11,6 @@ let help_string = (
 
 let invalid_arg_string = ("Invalid Arguments\n")
 
-let ast_holder = ("Ast would be printing\n")
-
 let check_option = function
      "-h" -> Help, "."
     | _ -> Error, "."
