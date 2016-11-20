@@ -4,7 +4,7 @@
 %token PLUS MINUS TIMES DIVIDE ASSIGN NOT
 %token EQ NEQ LT LEQ GT GEQ TRUE FALSE AND OR
 %token RETURN IF ELSE WHILE 
-%token INT BOOL CHAR FLOAT VOID NULL
+%token INT BOOL CHAR STRING FLOAT VOID NULL
 %token CLASS CONSTRUCTOR EXTENDS NEW
 
 %token <int> INT_LITERAL
@@ -146,6 +146,7 @@ typ:
    INT   { Datatype(Int) }
  | FLOAT { Datatype(Float) }
  | CHAR  { Datatype(Char) }
+ | STRING {Datatype(String)}
  | BOOL  { Datatype(Bool) }
  | VOID  { Datatype(Void) }
 
