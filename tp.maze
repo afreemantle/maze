@@ -1,5 +1,6 @@
 class test {
     void main (char args) {
+        void x;
         print("Hello World");
     }
        

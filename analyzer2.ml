@@ -21,10 +21,28 @@ let check classes =
     | _ -> ()
   in
 
-
-  let print_dname someClass =
-      List.iter (check_not_void (fun n -> "illegal void variable " ^ n)) someClass.dbody.vdecls
-      (* List.iter report_duplicate (fun n -> "duplicate variable " ^ n ) *)
+  let make_str_list = function
+      Field(_, n) -> print_string(n)
+    | _ -> ()
   in
 
+  (*let grab_field_id (a, b) = b
+  in*)
+
+  (*let create_str_list list =
+      List.Map (fun (x, y) -> y) list*)
+
+  let print_dname someClass =
+      List.iter (check_not_void (fun n -> "illegal void variable " ^ n)) someClass.dbody.vdecls;
+      List.iter make_str_list someClass.dbody.vdecls
+  in
+      (* List.iter report_duplicate (fun n -> "duplicate variable " ^ n ) *)
+
+  (*let make_str_list = function
+      Field(_, n) -> print_string(n)
+    | _ -> ()
+  in *)
+  
+
+  (*List.iter make_str_list classes;*)
   List.iter print_dname classes
