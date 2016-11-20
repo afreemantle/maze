@@ -15,12 +15,12 @@ let ast_holder = ("Ast would be printing\n")
 
 let check_option = function
      "-h" -> Help, "."
-    | _ as -> Error, "."
+    | _ -> Error, "."
 
 let check_action = function  
       "-h" -> Help 
     | "-a" -> Ast 
-    | _ as -> Error    
+    | _ -> Error    
 
 let _ =  
     let action, filename = 
