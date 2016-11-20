@@ -15,16 +15,21 @@ let check classes =
     in helper (List.sort compare list)
   in
 
+  let typ_of_datatype = function
+      Arraytype(p, i) -> p
+    | Datatype(p) -> p
+    | Any -> Null               (* <- this will cause problems eventually *)
+  in  
+
   (* Raise an exception if a given binding is to a void type *)
   let check_not_void exceptf = function
-      Field(Void, n) -> raise (Failure (exceptf n))  
-    | Field(t, n) -> print_endline (string_of_datatype t)
-    | _ -> ()
+      (*Field(Void, n) -> raise (Failure (exceptf n))  
+    | Field(t, n) -> print_endline (string_of_datatype t)*)
+    | Field(t, n) -> if typ_of_datatype t == Void then raise (Failure (exceptf n)) else (print_endline n)
   in
 
   let get_second = function
       Field(t, n) -> n
-    | _ -> ""
   in 
 
   let check_locals_lists someMethod =

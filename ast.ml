@@ -7,7 +7,7 @@ type typ = Int | Bool | Char | String |Float | Void | Null
 
 type extends = NoParent | Parent of string
 
-type datatype = Datatype of typ | Arraytype of typ * int | Any | Void
+type datatype = Datatype of typ | Arraytype of typ * int | Any
 
 type fname = Constructor | FName of string
 
@@ -95,7 +95,7 @@ let string_of_datatype = function
   Arraytype(p, i) -> (string_of_typ p)
 | Datatype(p) -> (string_of_typ p)
 | Any -> "Any"
-| Void -> "Void"
+(*| Void -> "Void"*)
 
 
 let rec string_of_bracket = function
