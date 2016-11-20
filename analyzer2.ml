@@ -5,7 +5,6 @@ module StringMap = Map.Make(String)
 
 let check classes =
 
-  (*
 
   (* Raise an exception if the given list has a duplicate *)
   let report_duplicate exceptf list =
@@ -16,7 +15,12 @@ let check classes =
     in helper (List.sort compare list)
   in
 
-  *)
+  (* Raise an exception if a given binding is to a void type *)
+  let check_not_void exceptf = function
+      (Void, n) -> raise (Failure (exceptf n))
+    | _ -> ()
+  in
+
 
   let print_dname someClass =
       print_string someClass.dname
