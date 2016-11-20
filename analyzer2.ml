@@ -17,23 +17,25 @@ let check classes =
 
   (* Raise an exception if a given binding is to a void type *)
   let check_not_void exceptf = function
-      Field(Void, n) -> raise (Failure (exceptf n))
+      Field(t, n) -> print_endline (string_of_datatype t)
+      (*Field(Void, n) -> raise (Failure (exceptf n))  *)
     | _ -> ()
   in
 
   let make_str_list = function
-      Field(_, n) -> print_string(n)
+      Field(_, n) -> print_endline(n)
     | _ -> ()
   in
 
-  (*let grab_field_id (a, b) = b
-  in*)
-
-  (*let create_str_list list =
-      List.Map (fun (x, y) -> y) list*)
+  let check_locals_lists someMethod =
+      List.iter (check_not_void (fun n -> "illegal void variable " ^ n)) someMethod.locals
+  in
 
   let print_dname someClass =
-      List.iter (check_not_void (fun n -> "illegal void variable " ^ n)) someClass.dbody.vdecls;
+      print_endline ("hi");
+      (*List.iter (check_not_void (fun n -> "illegal void variable " ^ n)) someClass.dbody.vdecls;*)
+      (*List.iter (check_not_void (fun n -> "illegal void variable " ^ n)) someClass.dbody.methods;*)
+      List.iter check_locals_lists someClass.dbody.methods;
       List.iter make_str_list someClass.dbody.vdecls
   in
       (* List.iter report_duplicate (fun n -> "duplicate variable " ^ n ) *)
