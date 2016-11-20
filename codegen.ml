@@ -121,8 +121,18 @@ let translate (globals, functions) =
           | _ -> L.build_ret (expr builder e) builder); builder
 
 
+      (* Code for each statement in the function *)
+      let builder = stmt builder (A.Block fdecl.A.body) in
 
+      (*MicroC behavior here is to have program return void 
+       * if control falls off the end of the program *)
+      add_terminal builder (match fdecl.A.typ with
+          A.Void -> L.build_ret_void 
+        | t -> L.build_ret (L.const_int (ltype_of_typ t) 0))
+      in
 
-
+      List.iter build_function_body functions;
+      the_module
+      
 
 
