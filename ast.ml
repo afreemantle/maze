@@ -7,7 +7,7 @@ type typ = Int | Bool | Char | String |Float | Void | Null
 
 type extends = NoParent | Parent of string
 
-type datatype = Datatype of typ | Arraytype of typ * int | Any
+type datatype = Datatype of typ | Arraytype of typ * int | Any | Void
 
 type fname = Constructor | FName of string
 

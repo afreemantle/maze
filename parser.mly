@@ -114,8 +114,9 @@ fdecl:
 
 /* Variables */
 
-/* vdecl_list:  nothing  { [] } */
-/* | vdecl_list vdecl { $2 :: $1 } */
+ vdecl_list: 
+    /* nothing */  { [] }
+ | vdecl_list vdecl { $2 :: $1 }
 
 vdecl: typ ID SEMI { Field($1, $2) }
      
