@@ -104,6 +104,11 @@ let translate (globals, functions) =
          L.build_call fdef (Array.of_list actuals) result builder
       
       (* MicroC has a helper here: add_terminal *)
+      let add_terminal builder f =
+          match L.block_terminator (L.insertion_block builder) with
+          Some _ -> ()
+        | None -> ignore (f builder) in
+
 
       (* define statements here *)
       let rec stmt builder = function 
