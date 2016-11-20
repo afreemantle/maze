@@ -1,4 +1,4 @@
-type action = Ast | Help | Error (*LLVM_IR | Compile*)
+type action = Ast | Help | Error | LLVM_IR | Compile
 
 let help_string = (
     "Usage: ./maze [option] <source file>\n" ^
@@ -20,6 +20,8 @@ let check_option = function
 let check_action = function  
       "-h" -> Help 
     | "-a" -> Ast 
+    | "-l" -> LLVM_IR 
+    | "-c" -> Compile
     | _ -> Error    
 
 let _ =  
@@ -33,10 +35,18 @@ let in_channel = open_in filename in
 let lexbuf = Lexing.from_channel in_channel in
 let program = Parser.program Scanner.token lexbuf in
 
+    (* Analyzer2.check ast; *)
+
     match action with 
         Help -> print_string help_string 
       | Ast -> print_string (Ast.string_of_program program)
+      | LLVM_IR -> print_string (Llvm.string_of_llmodule
+                                        (Codegen.translate ast))
+      | Compile -> let m = Codegen.translate ast in
+        Llvm_analysis.assert_valid_module m; (*Built in check*)
+        print_string (Llvm.string_of_llmodule m)
       | Error -> print_string invalid_arg_string
+       
 
 
 
