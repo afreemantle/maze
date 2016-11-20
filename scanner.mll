@@ -49,7 +49,6 @@ rule token = parse
 | "int" {INT}
 | "bool" {BOOL}
 | "char" {CHAR}
-| "string" {STRING}
 | "void" {VOID}
 | "true" {TRUE}
 | "false" {FALSE}
@@ -58,6 +57,13 @@ rule token = parse
 | "extends" {EXTENDS}
 | "class" {CLASS}
 | "new" {NEW}
+
+(*| ['0' - '9']+ as lxm { LITERAL(int_of_string lxm) } *)
+(*| ['0' - '9']+['.']['0' - '9']+ as lxm { FLOAT_LITERAL(float_of_string lxm) }
+| ['a' - 'z' 'A' - 'Z']['a' - 'z' 'A' - 'Z' '0' - '9' '_']* as lxm { ID(lxm) }
+| eof {EOF}
+| _ as char { raise (Failure("illegal character " ^ Char.escaped char)) } 
+*)
 
 | int as lxm  { INT_LITERAL(int_of_string lxm) }
 | float as lxm   { FLOAT_LITERAL(float_of_string lxm) }
