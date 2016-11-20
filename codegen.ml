@@ -102,6 +102,22 @@ let translate (globals, functions) =
          let result = (match fdecl.A.typ with A.Void -> ""
                                             | _ -> f ^ "_result") in
          L.build_call fdef (Array.of_list actuals) result builder
+      
+      (* MicroC has a helper here: add_terminal *)
+
+      (* define statements here *)
+      let rec stmt builder = function 
+          A.Block sl -> List.fold_left stmt builder sl
+
+        | A.Expr e -> ignore (expr builder e); builder
+
+        | A.Return e -> ignore (match fdecl.A.typ with
+            A.Void -> L.build_ret_void builder
+          | _ -> L.build_ret (expr builder e) builder); builder
+
+
+
+
 
 
 
