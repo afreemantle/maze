@@ -26,12 +26,10 @@ let check classes =
       (*Field(Void, n) -> raise (Failure (exceptf n))  
     | Field(t, n) -> print_endline (string_of_datatype t)*)
     | Field(t, n) -> if typ_of_datatype t == Void then raise (Failure (exceptf n)) else (print_endline n)
-    (*| _ -> ()*)
   in
 
   let get_second = function
       Field(t, n) -> n
-    (*| _ -> ""*)
   in 
 
   let check_locals_lists someMethod =
