@@ -1,0 +1,16 @@
+class test {
+    int a;
+    bool b;
+    char c;
+    string s;
+
+    void main (string args) {
+        int aa;
+        bool bb;
+        char cc;
+        string ss;
+
+        
+    }
+       
+}
