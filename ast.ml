@@ -3,7 +3,7 @@ type op = Add | Sub | Mult | Div | Equal | Neq |
 
 type uop = Neg | Not
 
-type typ = Int | Bool | Char | Float | Void | Null
+type typ = Int | Bool | Char | String |Float | Void | Null
 
 type extends = NoParent | Parent of string
 
@@ -84,6 +84,7 @@ let string_of_typ = function
   | Bool -> "bool"
   | Void -> "void"
   | Char -> "char"
+  | String -> "string"
   | Float -> "float"
   | Null -> "null"
 

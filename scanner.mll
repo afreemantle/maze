@@ -1,8 +1,5 @@
 { open Parser 
 
-  let lineno = ref 1
-  let depth = ref 0
-  let filename = ref ""
   let unescape s = Scanf.sscanf ("\"" ^ s ^ "\"") "%S%!" (fun x->x)
 }
 
@@ -49,6 +46,7 @@ rule token = parse
 | "int" {INT}
 | "bool" {BOOL}
 | "char" {CHAR}
+| "string" {STRING}
 | "void" {VOID}
 | "true" {TRUE}
 | "false" {FALSE}
