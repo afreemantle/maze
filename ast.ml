@@ -7,7 +7,7 @@ type typ = Int | Bool | Char | String |Float | Void | Null
 
 type extends = NoParent | Parent of string
 
-type datatype = Datatype of typ | Arraytype of typ * int | Any
+type datatype = Datatype of typ | Arraytype of typ * int | Any | Void
 
 type fname = Constructor | FName of string
 
@@ -29,19 +29,21 @@ type expr = Int_Lit of int
 	    | Call of string * expr list
  	    | Null
 
+type vdecl = Field of datatype * string
+
 type stmt = Block of stmt list
 	    | If of expr * stmt * stmt
 	    | While of expr * stmt
 	    | Expr of expr
 	    | Return of expr
             
-type vdecl = Field of datatype * string
+(* type vdecl = Field of datatype * string *)
 
 type func_decl = {
 	    fname   :  fname;
             returnType : datatype;
 	    formals :  formal list;
-	   (* locals  :  bind list;*)
+	    locals  :  vdecl list;
 	    body    :  stmt list;
 }
 
@@ -93,6 +95,7 @@ let string_of_datatype = function
   Arraytype(p, i) -> (string_of_typ p)
 | Datatype(p) -> (string_of_typ p)
 | Any -> "Any"
+| Void -> "Void"
 
 
 let rec string_of_bracket = function
@@ -126,6 +129,8 @@ and string_of_expr = function
   | ArrayCreate(d, e1) -> "new " ^ string_of_datatype d
   | ArrayAccess(e, e1) -> string_of_expr e
 
+let string_of_vdecl = function        
+Field(t, id) -> (string_of_datatype t) ^ " " ^ id ^ ";\n"
 
 let rec string_of_stmt = function
     Block(stmts) ->
@@ -136,6 +141,7 @@ let rec string_of_stmt = function
   | If(e, s1, s2) ->  "if (" ^ string_of_expr e ^ ")\n" ^
       string_of_stmt s1 ^ "else\n" ^ string_of_stmt s2
   | While(e, s) -> "while (" ^ string_of_expr e ^ ") " ^ string_of_stmt s
+(*  | Vdecl(vdecl) -> string_of_vdecl vdecl ^ ";\n" *)
 
 
 let string_of_fname = function
@@ -143,8 +149,8 @@ let string_of_fname = function
 |    FName(s) -> s
 
 
-let string_of_vdecl = function
-Field(t, id) -> (string_of_datatype t) ^ " " ^ id ^ ";\n"
+(*let string_of_vdecl = function
+Field(t, id) -> (string_of_datatype t) ^ " " ^ id ^ ";\n" *)
 
 let string_of_formal = function
 Formal(d, s) -> (string_of_datatype d) ^ " " ^ s
