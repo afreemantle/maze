@@ -94,5 +94,14 @@ let translate (globals, functions) =
               L.build_call printf_func
                  [| int_format_str ; (expr builder e) |]
                  "print" builder
-      
+      (* This evaluates arguments backwards *)
+      | A.Call (f, act) ->
+         let (fdef, fdecl) = StringMap.find f function _decls in
+         let actuals =
+             List.rev (List.map (expr builder) (List.rev act)) in
+         let result = (match fdecl.A.typ with A.Void -> ""
+                                            | _ -> f ^ "_result") in
+         L.build_call fdef (Array.of_list actuals) result builder
+
+
 
