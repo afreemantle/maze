@@ -160,6 +160,7 @@ Formal(d, s) -> (string_of_datatype d) ^ " " ^ s
 let string_of_func_decl fdecl = (string_of_datatype fdecl.returnType) ^ " " ^ (string_of_fname fdecl.fname) ^ " " ^
     "\n{\n" ^ 
      String.concat "," (List.map string_of_formal fdecl.formals) ^
+     String.concat "" (List.map string_of_vdecl fdecl.locals) ^ "\n" ^
      String.concat "" (List.map string_of_stmt fdecl.body) ^ "}\n"  
 
 let string_of_dbody dbody = 
