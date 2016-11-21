@@ -50,7 +50,7 @@ let check classes =
 
 
   (* ------------------------- Verify function section ------------------------- *)
-
+  let check_methods_class someClass =
   let string_of_fname = function
       FName(s) -> s
     | Constructor -> ""
@@ -61,18 +61,21 @@ let check classes =
       then raise (Failure ("function print is already defined")) else ();
   in
       
-  let check_methods_class someClass =
+  (*let check_methods_class someClass = *)
       let methods = someClass.dbody.methods in
       check_for_print methods;
       report_duplicate (fun n -> "duplicate function " ^ n)
         (List.map (fun f -> string_of_fname f.fname) methods);
-  in
+  in 
+  
 
   let built_in_decls = StringMap.add "print"
-     { returnType = Datatype(Void); fname = FName("print"); formals = [Formal((Datatype(String), ""))];
-       locals = []; body = [] }
+     { returnType = Datatype(Void); fname = FName("print"); formals = [Formal(Datatype(String), "")]; locals = []; body = [] }
   in
 
 
+  (*let function_decls = List.fold_left (fun m f -> StringMap.add (string_of_fname f.fname) f m)
+                        built_in_decls methods
+  in *)
 
   List.iter check_methods_class classes;
