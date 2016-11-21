@@ -42,13 +42,29 @@ let check classes =
   in
 
   (* Checks local variables for each method of a class argument *)
-  let print_dname someClass =
+  let check_locals_class someClass =
       List.iter check_locals_lists someClass.dbody.methods;
   in
 
-  List.iter print_dname classes;
+  List.iter check_locals_class classes;
 
 
   (* ------------------------- Verify function section ------------------------- *)
 
+  let string_of_fname = function
+      FName(s) -> s
+    | Constructor -> ""
+  in
 
+
+  let check_for_print funcList =
+      if List.mem "print" (List.map (fun f -> string_of_fname f.fname) funcList)
+      then raise (Failure ("function print is already defined")) else ();
+  in
+      
+  let check_methods_class someClass =
+      let methods = someClass.dbody.methods in
+      check_for_print methods
+  in
+
+  List.iter check_methods_class classes;
