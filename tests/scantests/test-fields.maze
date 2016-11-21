@@ -9,8 +9,5 @@ class test {
         bool bb;
         char cc;
         string ss;
-
-        
     }
-       
 }
