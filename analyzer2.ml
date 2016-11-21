@@ -56,6 +56,12 @@ let check classes =
     | Constructor -> ""
   in
 
+  let fname_of_string = function
+      s -> FName(s)
+  in
+
+  (*let datatype_of_typ = function *)
+
 
   let check_for_print funcList =
       if List.mem "print" (List.map (fun f -> string_of_fname f.fname) funcList)
@@ -64,7 +70,33 @@ let check classes =
       
   let check_methods_class someClass =
       let methods = someClass.dbody.methods in
-      check_for_print methods
+      check_for_print methods;
+      report_duplicate (fun n -> "duplicate function " ^ n)
+        (List.map (fun f -> string_of_fname f.fname) methods);
   in
+
+  let built_in_decls = StringMap.add "print"
+     { returnType = Datatype(Void); fname = FName("print"); formals = [Formal((Datatype(String), ""))];
+       locals = []; body = [] }
+  in
+
+  (*let function_decls*)
+
+  (*let string_of_fname = function
+      FName(s) -> s
+    | Constructor -> ""
+  in
+
+  let check_for_print funcList =
+      if List.mem "print" (List.map (fun f -> string_of_fname f.fname) funcList)
+      then raise (Failure ("function print is already defined")) else ();
+  in
+      
+  let check_methods_class someClass =
+      let methods = someClass.dbody.methods in
+      check_for_print methods;
+      report_duplicate (fun n -> "duplicate function " ^ n)
+        (List.map (fun f -> string_of_fname f.fname) methods);
+  in *)
 
   List.iter check_methods_class classes;
