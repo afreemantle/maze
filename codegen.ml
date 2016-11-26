@@ -15,11 +15,14 @@ let translate (globals, functions) =
     and void_t = L.void_type context in (* void *)
     (* add our other types here *)
 
-    let ltype_of_type = function 
+    let ltype_of_typ = function 
         A.Int -> i32_t
       | A.Bool -> i1_t
-      | A.Void -> void_t in
-      (* add our other types here *)
+      | A.Void -> void_t
+      | A.String -> i32_t (* i32_t just placeholder from here down *) 
+      | A.Float -> i32_t
+      | A.Char -> i32_t
+      | A.Null -> i32_t in
 
     (* This is where global var func would go *)
     
@@ -36,8 +39,8 @@ let translate (globals, functions) =
     let function_decls = 
         let function_decl m fdecl =
             let name = fdecl.A.fname
-            and formal_types = Array.of_list
-                (List.map (fun (t,_) -> ltype_of_typ t) fdecl.A.formals)
+            and formal_types = 
+                Array.of_list (List.map (fun (t,_) -> ltype_of_typ t) fdecl.A.formals)
             in let ftype = 
                 L.function_type (ltype_of_typ fdecl.A.typ) formal_types in
             StringMap.add name (L.define_function name ftype the_module,
@@ -96,12 +99,12 @@ let translate (globals, functions) =
                  "print" builder
       (* This evaluates arguments backwards *)
       | A.Call (f, act) ->
-         let (fdef, fdecl) = StringMap.find f function _decls in
+         let (fdef, fdecl) = StringMap.find f function_decls in
          let actuals =
              List.rev (List.map (expr builder) (List.rev act)) in
          let result = (match fdecl.A.typ with A.Void -> ""
                                             | _ -> f ^ "_result") in
-         L.build_call fdef (Array.of_list actuals) result builder
+         L.build_call fdef (Array.of_list actuals) result builder in
       
       (* MicroC has a helper here: add_terminal *)
       let add_terminal builder f =
@@ -118,7 +121,7 @@ let translate (globals, functions) =
 
         | A.Return e -> ignore (match fdecl.A.typ with
             A.Void -> L.build_ret_void builder
-          | _ -> L.build_ret (expr builder e) builder); builder
+          | _ -> L.build_ret (expr builder e) builder); builder in
 
 
       (* Code for each statement in the function *)
@@ -133,6 +136,3 @@ let translate (globals, functions) =
 
       List.iter build_function_body functions;
       the_module
-      
-
-
