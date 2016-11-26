@@ -13,6 +13,8 @@ type fname = Constructor | FName of string
 
 type formal = Formal of datatype * string | Many of datatype
 
+type bind = typ * string
+
 type expr = Int_Lit of int
 	    | Id of string
 	    | Binop of expr * op * expr
@@ -40,8 +42,8 @@ type vdecl = Field of datatype * string
 type func_decl = {
 	    fname   :  fname;
             returnType : datatype;
-	    formals :  formal list;
-	   (* locals  :  bind list;*)
+	    formals :  bind list;
+	    (*locals  :  bind list;*)
 	    body    :  stmt list;
 }
 
