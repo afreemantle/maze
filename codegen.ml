@@ -5,7 +5,14 @@ module A = Ast
 
 module StringMap = Map.Make(String)
 
-let translate (globals, functions) = 
+(*let init_translate(classes) =
+    let translate_class someClass =
+        let locals = someClass.dbody.vdecls and
+        functions = someClass.dbody.methods in
+    in *)
+
+
+let translate (locals, functions) = 
     let context = L.global_context () in 
     let the_module = L.create_module context "maze"
 
@@ -157,4 +164,15 @@ let translate (globals, functions) =
       in
 
       List.iter build_function_body functions;
-      the_module
+      (*the_module*)
+
+
+let init_translate(classes) =
+    let translate_class someClass =
+        let locals = someClass.A.dbody.vdecls and
+        functions = someClass.A.dbody.methods in
+        translate locals functions
+    in
+
+    List.iter translate_class classes;
+    the_module

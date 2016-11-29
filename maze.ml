@@ -41,8 +41,8 @@ Analyzer2.check program;
         Help -> print_string help_string 
       | Ast -> print_string (Ast.string_of_program program)
       | LLVM_IR -> print_string (Llvm.string_of_llmodule
-                                        (Codegen.translate program))
-      | Compile -> let m = Codegen.translate ast in
+                                        (Codegen.init_translate program))
+      | Compile -> let m = Codegen.init_translate program in
         Llvm_analysis.assert_valid_module m; (*Built in check*)
         print_string (Llvm.string_of_llmodule m)
       | Error -> print_string invalid_arg_string
