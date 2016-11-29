@@ -1,3 +1,4 @@
+open Printf
 type action = Ast | Help | Error | LLVM_IR | Compile
 
 let help_string = (
@@ -44,7 +45,8 @@ Analyzer2.check program;
                                         (Codegen.translate program))
       | Compile -> let m = Codegen.translate program in
         Llvm_analysis.assert_valid_module m; (*Built in check*)
-        print_string (Llvm.string_of_llmodule m)
+        print_string (Llvm.string_of_llmodule m);
+        let oc = open_out "a.bc" in fprintf oc "%s\n" (Llvm.string_of_llmodule m); close_out oc;
       | Error -> print_string invalid_arg_string
        
 
