@@ -70,7 +70,7 @@ let translate (classes) =
     let printf_t = 
         L.var_arg_function_type i32_t [| L.pointer_type i8_t |] in
     let printf_func = 
-        L.declare_function "print" printf_t the_module in
+        L.declare_function "printf" printf_t the_module in
 
     (* Define functions *)
 
@@ -133,7 +133,7 @@ let translate (classes) =
       | A.Call ("print", [e]) ->
               L.build_call printf_func
                  [| int_format_str ; (expr builder e) |]
-                 "print" builder
+                 "printf" builder
       (* This evaluates arguments backwards *)
       | A.Call (f, act) ->
          let (fdef, fdecl) = StringMap.find f function_decls in
@@ -172,10 +172,7 @@ let translate (classes) =
       in
 
       (*let build_fcns_locals someClass =
-        List.iter build_function_body someClass.A.dbody.methods
-      in
-
-      List.iter build_fcns_locals classes;*)
+        List.iter build_function_body someC *)
 
       List.iter build_function_body functions;
       the_module
