@@ -15,6 +15,12 @@ let translate (globals, functions) =
     and void_t = L.void_type context in (* void *)
     (* add our other types here *)
 
+    let typ_of_datatype = function
+        A.Arraytype(p, i) -> p
+      | A.Datatype(p) -> p
+      | A.Any -> Null
+    in
+
     let ltype_of_typ = function 
         A.Int -> i32_t
       | A.Bool -> i1_t
@@ -23,6 +29,20 @@ let translate (globals, functions) =
       | A.Float -> i32_t
       | A.Char -> i32_t
       | A.Null -> i32_t in
+
+    (* let ltype_of_datatype = function
+        ltype_of_typ (typ_of_datatype x)
+    in *)
+
+    let ltype_of_formal = function
+        A.Int -> i32_t
+      | A.Bool -> i1_t
+      | A.Void -> void_t
+      | A.String -> i32_t (* i32_t just placeholder from here down *) 
+      | A.Float -> i32_t
+      | A.Char -> i32_t
+      | A.Null -> i32_t in
+
 
     (* This is where global var func would go *)
     
@@ -40,7 +60,8 @@ let translate (globals, functions) =
         let function_decl m fdecl =
             let name = fdecl.A.fname
             and formal_types = 
-                Array.of_list (List.map (fun (t,_) -> ltype_of_typ t) fdecl.A.formals)
+                (* Array.of_list (List.map (fun (t,_) -> ltype_of_typ t) fdecl.A.formals) *)
+                Array.of_list (List.map (fun A.Formal t _ -> ltype_of_typ (datatype_of_typ t)) fdecl.A.formals)
             in let ftype = 
                 L.function_type (ltype_of_typ fdecl.A.typ) formal_types in
             StringMap.add name (L.define_function name ftype the_module,
