@@ -5,14 +5,22 @@ module A = Ast
 
 module StringMap = Map.Make(String)
 
-(*let init_translate(classes) =
-    let translate_class someClass =
-        let locals = someClass.dbody.vdecls and
-        functions = someClass.dbody.methods in
-    in *)
 
+let translate (classes) =
 
-let translate (locals, functions) = 
+    let grab_dbody someClass =
+        someClass.A.dbody
+    in
+
+    let rec grab_fcn_lists = function
+        (*[] -> []*)
+        [x] -> let y = x.A.methods in y
+      | head :: tail -> let r = head.A.methods in r @ grab_fcn_lists tail
+    in
+
+    let dbodies = List.map grab_dbody classes in
+    let functions = grab_fcn_lists dbodies in
+
     let context = L.global_context () in 
     let the_module = L.create_module context "maze"
 
@@ -64,8 +72,8 @@ let translate (locals, functions) =
     let printf_func = 
         L.declare_function "print" printf_t the_module in
 
-    (* Define functions *) 
-    
+    (* Define functions *)
+
     let function_decls = 
         let function_decl m fdecl =
             let name = (string_of_FName fdecl.A.fname)
@@ -163,16 +171,22 @@ let translate (locals, functions) =
         | t -> L.build_ret (L.const_int (ltype_of_typ t) 0))
       in
 
+      (*let build_fcns_locals someClass =
+        List.iter build_function_body someClass.A.dbody.methods
+      in
+
+      List.iter build_fcns_locals classes;*)
+
       List.iter build_function_body functions;
-      the_module;;
+      the_module
 
 
-let init_translate(classes) =
+(*let init_translate(classes) =
     let translate_class someClass =
         let locals = someClass.A.dbody.vdecls and
         functions = someClass.A.dbody.methods in
         translate (locals, functions)
-    in
+    in 
 
-    List.iter translate_class classes;
+    List.iter translate_class classes;*)
     (*the_module*)
