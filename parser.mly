@@ -89,6 +89,7 @@ constructor:
             fname = Constructor;
             formals = $3;
             body = List.rev $6;
+            locals = [];
             returnType = Any
         }
     }
@@ -101,21 +102,23 @@ fname:
     ID { $1 }
   
 fdecl:
-     typ fname LPAREN formals_opt RPAREN LBRACE stmt_list RBRACE
+     typ fname LPAREN formals_opt RPAREN LBRACE vdecl_list stmt_list RBRACE
      {
          {
              fname = FName($2);
              returnType = $1;
              formals = $4;
-             body = List.rev $7; (*stmt_list; *)
+             locals = List.rev $7;
+             body = List.rev $8; (* stmt_list; *)
          }
      }
 
 
 /* Variables */
 
-/* vdecl_list:  nothing  { [] } */
-/* | vdecl_list vdecl { $2 :: $1 } */
+ vdecl_list: 
+    /* nothing */  { [] }
+ | vdecl_list vdecl { $2 :: $1 }
 
 vdecl: typ ID SEMI { Field($1, $2) }
      
@@ -165,6 +168,7 @@ stmt:
  | IF LPAREN expr RPAREN stmt %prec NOELSE   { If($3, $5, Block([])) }
  | IF LPAREN expr RPAREN stmt ELSE stmt   { If($3, $5, $7) }
  | WHILE LPAREN expr RPAREN stmt  { While($3, $5) }
+/* | typ ID SEMI { Vdecl($1, $2) } */
 
 
 expr:

@@ -35,7 +35,7 @@ let in_channel = open_in filename in
 let lexbuf = Lexing.from_channel in_channel in
 let program = Parser.program Scanner.token lexbuf in
 
-    (* Analyzer2.check ast; *)
+Analyzer2.check program;
 
     match action with 
         Help -> print_string help_string 
