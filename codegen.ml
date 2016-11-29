@@ -171,19 +171,7 @@ let translate (classes) =
         | t -> L.build_ret (L.const_int (ltype_of_typ t) 0))
       in
 
-      (*let build_fcns_locals someClass =
-        List.iter build_function_body someC *)
 
       List.iter build_function_body functions;
       the_module
 
-
-(*let init_translate(classes) =
-    let translate_class someClass =
-        let locals = someClass.A.dbody.vdecls and
-        functions = someClass.A.dbody.methods in
-        translate (locals, functions)
-    in 
-
-    List.iter translate_class classes;*)
-    (*the_module*)
