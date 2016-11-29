@@ -11,7 +11,7 @@ type datatype = Datatype of typ | Arraytype of typ * int | Any
 
 type fname = Constructor | FName of string
 
-type formal = Formal of datatype * string | Many of datatype
+type formal = Formal of datatype * string
 
 type bind = typ * string
 
