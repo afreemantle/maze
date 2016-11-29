@@ -38,6 +38,10 @@ let translate (globals, functions) =
         A.Formal(t, n) -> (typ_of_datatype t, n)
     in
 
+    let typeKey_of_local = function
+        A.Field(t, n) -> (typ_of_datatype t, n)
+    in
+
     let string_of_FName = function
         A.FName(f) -> f
       | A.Constructor -> ""
@@ -96,7 +100,7 @@ let translate (globals, functions) =
 
         let formals = List.fold_left2 add_formal StringMap.empty
             (List.map typeKey_of_formal fdecl.A.formals) (Array.to_list (L.params the_function)) in
-        List.fold_left add_local formals fdecl.A.locals in
+        List.fold_left add_local formals (List.map typeKey_of_local fdecl.A.locals) in
     
     (* in MicroC, this lookup funtion finds the value for a variable *)
     let lookup n = try StringMap.find n local_vars
