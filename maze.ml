@@ -1,4 +1,5 @@
-type action = Ast | Help | Error (*LLVM_IR | Compile*)
+open Printf
+type action = Ast | Help | Error | LLVM_IR | Compile
 
 let help_string = (
     "Usage: ./maze [option] <source file>\n" ^
@@ -20,6 +21,8 @@ let check_option = function
 let check_action = function  
       "-h" -> Help 
     | "-a" -> Ast 
+    | "-l" -> LLVM_IR 
+    | "-c" -> Compile
     | _ -> Error    
 
 let _ =  
@@ -38,7 +41,14 @@ Analyzer2.check program;
     match action with 
         Help -> print_string help_string 
       | Ast -> print_string (Ast.string_of_program program)
+      | LLVM_IR -> print_string (Llvm.string_of_llmodule
+                                        (Codegen.translate program))
+      | Compile -> let m = Codegen.translate program in
+        Llvm_analysis.assert_valid_module m; (*Built in check*)
+        print_string (Llvm.string_of_llmodule m);
+        let oc = open_out "a.bc" in fprintf oc "%s\n" (Llvm.string_of_llmodule m); close_out oc;
       | Error -> print_string invalid_arg_string
+       
 
 
 
