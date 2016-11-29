@@ -103,19 +103,18 @@ let translate (globals, functions) =
         List.fold_left add_local formals (List.map typeKey_of_local fdecl.A.locals) in
     
     (* in MicroC, this lookup funtion finds the value for a variable *)
-    let lookup n = try StringMap.find n local_vars
-                   with Not_found -> StringMap.find n global_vars
-    in
+    let lookup n = StringMap.find n local_vars in
+    
 
     (* Generate code for an expression *)
 
     let rec expr builder = function 
-      (*  A.Int_Lit i -> L.const_int i32_t i
+        A.Int_Lit i -> L.const_int i32_t i
       | A.Bool_Lit b -> L.const_int i1_t (if b then 1 else 0)
       | A.Noexpr -> L.const_int i32_t 0
       | A.Id s -> L.build_load (lookup s) s builder
       | A.Assign (s, e) -> let e' = expr builder e in
-                ignore (L.build_store e' (lookup s) builder); e'*)
+                ignore (L.build_store e' (lookup s) builder); e'
       | A.Call ("print", [e]) ->
               L.build_call printf_func
                  [| int_format_str ; (expr builder e) |]
@@ -125,7 +124,7 @@ let translate (globals, functions) =
          let (fdef, fdecl) = StringMap.find f function_decls in
          let actuals =
              List.rev (List.map (expr builder) (List.rev act)) in
-         let result = (match fdecl.A.typ with A.Void -> ""
+         let result = (match (typ_of_datatype fdecl.A.returnType) with A.Void -> ""
                                             | _ -> f ^ "_result") in
          L.build_call fdef (Array.of_list actuals) result builder in
       
@@ -142,7 +141,7 @@ let translate (globals, functions) =
 
         | A.Expr e -> ignore (expr builder e); builder
 
-        | A.Return e -> ignore (match fdecl.A.typ with
+        | A.Return e -> ignore (match (typ_of_datatype fdecl.A.returnType) with
             A.Void -> L.build_ret_void builder
           | _ -> L.build_ret (expr builder e) builder); builder in
 
@@ -152,7 +151,7 @@ let translate (globals, functions) =
 
       (*MicroC behavior here is to have program return void 
        * if control falls off the end of the program *)
-      add_terminal builder (match fdecl.A.typ with
+      add_terminal builder (match (typ_of_datatype fdecl.A.returnType) with
           A.Void -> L.build_ret_void 
         | t -> L.build_ret (L.const_int (ltype_of_typ t) 0))
       in
