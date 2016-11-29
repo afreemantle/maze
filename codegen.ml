@@ -36,6 +36,7 @@ let translate (globals, functions) =
 
     let ltype_of_formal = function
         A.Formal(t, n) -> ltype_of_typ(typ_of_datatype t)
+    in
       (*| A.Bool -> i1_t
       | A.Void -> void_t
       | A.String -> i32_t (* i32_t just placeholder from here down *) 
