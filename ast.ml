@@ -156,7 +156,6 @@ Field(t, id) -> (string_of_datatype t) ^ " " ^ id ^ ";\n" *)
 
 let string_of_formal = function
 Formal(d, s) -> (string_of_datatype d) ^ " " ^ s
-| _ -> ""
 
 
 let string_of_func_decl fdecl = (string_of_datatype fdecl.returnType) ^ " " ^ (string_of_fname fdecl.fname) ^ " " ^
