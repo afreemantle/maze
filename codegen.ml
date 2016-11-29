@@ -164,15 +164,15 @@ let translate (locals, functions) =
       in
 
       List.iter build_function_body functions;
-      (*the_module*)
+      the_module;;
 
 
 let init_translate(classes) =
     let translate_class someClass =
         let locals = someClass.A.dbody.vdecls and
         functions = someClass.A.dbody.methods in
-        translate locals functions
+        translate (locals, functions)
     in
 
     List.iter translate_class classes;
-    the_module
+    (*the_module*)
