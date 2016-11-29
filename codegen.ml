@@ -35,6 +35,10 @@ let translate (globals, functions) =
       | A.Many(t) -> ltype_of_typ(typ_of_datatype t)
     in
 
+    let string_of_FName = function
+        A.FName(f) -> f
+      | A.Constructor -> ""
+    in
 
     (* This is where global var func would go *)
     
@@ -50,7 +54,7 @@ let translate (globals, functions) =
     
     let function_decls = 
         let function_decl m fdecl =
-            let name = fdecl.A.fname
+            let name = (string_of_FName fdecl.A.fname)
             and formal_types = 
                 Array.of_list (List.map ltype_of_formal fdecl.A.formals)
             in let ftype = 
