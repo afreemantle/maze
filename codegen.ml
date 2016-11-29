@@ -96,8 +96,10 @@ let translate (classes) =
             L.builder_at_end context (L.entry_block the_function) in
 
         (* this will only print ints right now *)
+        (*let int_format_str =
+            L.build_global_stringptr "%d\n" "fmt" builder in*)
         let int_format_str =
-            L.build_global_stringptr "%d\n" "fmt" builder in
+            L.build_global_stringptr "%s\n" "fmt" builder in
 
         (* For the cool TADS like feature I am going to 
          * need to do string formatting *)
@@ -126,6 +128,7 @@ let translate (classes) =
     let rec expr builder = function 
         A.Int_Lit i -> L.const_int i32_t i
       | A.Bool_Lit b -> L.const_int i1_t (if b then 1 else 0)
+      | A.String_Lit s -> L.build_global_stringptr s "str" builder
       | A.Noexpr -> L.const_int i32_t 0
       | A.Id s -> L.build_load (lookup s) s builder
       | A.Assign (s, e) -> let e' = expr builder e in
