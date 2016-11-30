@@ -85,13 +85,19 @@ Check() {
 
     generatedfiles=""
 
+    
     generatedfiles="$generatedfiles ${basename}.ll ${basename}.out" &&
-    Run "$MAZE" "<" $1 ">" "${basename}.ll" &&
-    Run "$LLI" "${basename}.ll" ">" "${basename}.out" &&
+    #$MAZE '-c' $reffile 2 > ${basename}.ll
+    #Run "$MAZE" "<" $1 ">" "${basename}.ll" &&
+    $MAZE '-c' "${reffile}.maze"     
+    Run "$LLI ${reffile}.maze.ll" ">" "${basename.out}" &&
     Compare ${basename}.out ${reffile}.out ${basename}.diff
 
+    echo "     lalalalalala ${basename}.out GENERATED  "    
+    echo "    gagagagagaga  ${reffile}.out"   
     # Report the status and clean up the generated files
 
+    echo "DIFFFFF  $(${basename}.diff) jjjio"
     if [ $error -eq 0 ] ; then
 	if [ $keep -eq 0 ] ; then
 	    rm -f $generatedfiles

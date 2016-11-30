@@ -1,7 +1,0 @@
-class test {
-    void main (string args){
-        print(42);
-        print(71);
-        print(1);
-    }
-}
