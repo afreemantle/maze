@@ -85,9 +85,12 @@ Check() {
 
     generatedfiles=""
 
+    
     generatedfiles="$generatedfiles ${basename}.ll ${basename}.out" &&
-    Run "$MAZE" "<" $1 ">" "${basename}.ll" &&
-    Run "$LLI" "${basename}.ll" ">" "${basename}.out" &&
+    #$MAZE '-c' $reffile 2 > ${basename}.ll
+    #Run "$MAZE" "<" $1 ">" "${basename}.ll" &&
+    $MAZE '-c' "${reffile}.maze"     
+    Run "$LLI ${reffile}.ll" ">" "${basename}.out" &&
     Compare ${basename}.out ${reffile}.out ${basename}.diff
 
     # Report the status and clean up the generated files
