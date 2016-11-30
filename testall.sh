@@ -93,8 +93,6 @@ Check() {
     Run "$LLI ${reffile}.ll" ">" "${basename}.out" &&
     Compare ${basename}.out ${reffile}.out ${basename}.diff
 
-    echo "     lalalalalala ${basename}.out GENERATED  "    
-    echo "    gagagagagaga  ${reffile}.out"   
     # Report the status and clean up the generated files
 
     if [ $error -eq 0 ] ; then
