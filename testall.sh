@@ -90,7 +90,8 @@ Check() {
     #$MAZE '-c' $reffile 2 > ${basename}.ll
     #Run "$MAZE" "<" $1 ">" "${basename}.ll" &&
     $MAZE '-c' "${reffile}.maze"     
-    Run "$LLI ${reffile}.ll" ">" "${basename}.out" &&
+    #Run "$LLI ${reffile}.ll" ">" "${basename}.out" &&
+    $LLI "${reffile}.ll" > "${basename}.out"
     Compare ${basename}.out ${reffile}.out ${basename}.diff
 
     # Report the status and clean up the generated files
