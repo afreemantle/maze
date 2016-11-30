@@ -99,7 +99,7 @@ let translate (classes) =
         (*let int_format_str =
             L.build_global_stringptr "%d\n" "fmt" builder in*)
         let int_format_str =
-            L.build_global_stringptr "%s\n" "fmt" builder in
+            L.build_global_stringptr "%s\n" "fmt" builder in  (* <-- SLOPPY *)
 
         (* For the cool TADS like feature I am going to 
          * need to do string formatting *)
