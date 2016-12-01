@@ -9,8 +9,7 @@
 LLI="lli"
 #LLI="/usr/local/opt/llvm/bin/lli"
 
-# Path to the microc compiler.  Usually "./microc.native"
-# Try "_build/microc.native" if ocamlbuild was unable to create a symbolic link.
+# Path to the maze compiler.
 MAZE="./maze"
 #MAZE="./maze"
 
@@ -87,10 +86,7 @@ Check() {
 
     
     generatedfiles="$generatedfiles ${basename}.ll ${basename}.out" &&
-    #$MAZE '-c' $reffile 2 > ${basename}.ll
-    #Run "$MAZE" "<" $1 ">" "${basename}.ll" &&
     $MAZE '-c' "${reffile}.maze"     
-    #Run "$LLI ${reffile}.ll" ">" "${basename}.out" &&
     $LLI "${reffile}.ll" > "${basename}.out"
     Compare ${basename}.out ${reffile}.out ${basename}.diff
 
@@ -123,8 +119,9 @@ CheckFail() {
     generatedfiles=""
 
     generatedfiles="$generatedfiles ${basename}.err ${basename}.diff" &&
-    RunFail "$MAZE" "<" $1 "2>" "${basename}.err" ">>" $globallog &&
-    Compare ${basename}.err ${reffile}.err ${basename}.diff
+    #SHOULD UNCOMMENT THESE AFTER WE IMPLEMENT EXCEPTIONS 
+    #RunFail "$MAZE" "<" $1 "2>" "${basename}.err" ">>" $globallog &&
+    #Compare ${basename}.err ${reffile}.err ${basename}.diff
 
     # Report the status and clean up the generated files
 
