@@ -13,8 +13,8 @@ let translate (classes) =
     in
 
     let rec grab_fcn_lists = function
-        (*[] -> []*)
-        [x] -> let y = x.A.methods in y
+        [] -> []
+      | [x] -> let y = x.A.methods in y
       | head :: tail -> let r = head.A.methods in r @ grab_fcn_lists tail
     in
 
