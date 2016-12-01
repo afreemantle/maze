@@ -96,9 +96,9 @@ let translate (classes) =
             L.builder_at_end context (L.entry_block the_function) in
 
         (* this will only print ints right now *)
-        (*let int_format_str =
-            L.build_global_stringptr "%d\n" "fmt" builder in*)
         let int_format_str =
+            L.build_global_stringptr "%d\n" "fmt" builder in
+        let str_format_str =
             L.build_global_stringptr "%s\n" "fmt" builder in  (* <-- SLOPPY *)
 
         (* For the cool TADS like feature I am going to 
@@ -121,7 +121,10 @@ let translate (classes) =
     
     (* in MicroC, this lookup funtion finds the value for a variable *)
     let lookup n = StringMap.find n local_vars in
-    
+   
+    let check_print_input = function
+        A.Int_Lit e -> int_format_str
+      | A.String_Lit e -> str_format_str in
 
     (* Generate code for an expression *)
 
@@ -133,9 +136,8 @@ let translate (classes) =
       | A.Id s -> L.build_load (lookup s) s builder
       | A.Assign (s, e) -> let e' = expr builder e in
                 ignore (L.build_store e' (lookup s) builder); e'
-      | A.Call ("print", [e]) ->
-              L.build_call printf_func
-                 [| int_format_str ; (expr builder e) |]
+      | A.Call ("print", [e]) -> L.build_call printf_func
+                 [| check_print_input e; (expr builder e) |]
                  "printf" builder
       (* This evaluates arguments backwards *)
       | A.Call (f, act) ->
@@ -177,4 +179,3 @@ let translate (classes) =
 
       List.iter build_function_body functions;
       the_module
-
