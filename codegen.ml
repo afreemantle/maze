@@ -27,6 +27,7 @@ let translate (classes) =
     and i32_t = L.i32_type context      (* int *)
     and i8_t = L.i8_type context        (* printf *)
     and i1_t = L.i1_type context        (* bool *)
+    and f_t = L.double_type context     (* float *)
     and void_t = L.void_type context in (* void *)
     (* add our other types here *)
 
@@ -37,19 +38,19 @@ let translate (classes) =
     in
 
     let ltype_of_typ = function 
-        A.Int -> i32_t
+        A.Int -> i32_t 
       | A.Bool -> i1_t
       | A.Void -> void_t
       | A.String -> i32_t (* i32_t just placeholder from here down *) 
-      | A.Float -> i32_t
-      | A.Char -> i32_t
+      | A.Float -> f_t
+      | A.Char -> i8_t
       | A.Null -> i32_t in
 
     let ltype_of_formal = function
         A.Formal(t, n) -> ltype_of_typ(typ_of_datatype t)
     in
 
-    let typeKey_of_formal = function
+   let typeKey_of_formal = function
         A.Formal(t, n) -> (typ_of_datatype t, n)
     in
 
@@ -136,6 +137,9 @@ let translate (classes) =
       | A.Id s -> L.build_load (lookup s) s builder
       | A.Assign (s, e) -> let e' = expr builder e in
                 ignore (L.build_store e' (lookup s) builder); e'
+      | A.Float_Lit f -> L.const_float f_t f
+      | A.Char_Lit c -> L.const_int i8_t (Char.code c)
+      | A.Null -> L.const_null i32_t
       | A.Call ("print", [e]) -> L.build_call printf_func
                  [| check_print_input e; (expr builder e) |]
                  "printf" builder
