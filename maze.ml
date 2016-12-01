@@ -50,7 +50,7 @@ Analyzer2.check program;
                                         (Codegen.translate program))
       | Compile -> let m = Codegen.translate program in
         Llvm_analysis.assert_valid_module m; (*Built in check*)
-        print_string (Llvm.string_of_llmodule m);
+        (*print_string (Llvm.string_of_llmodule m);*)
         (*Llvm.dump_module m;*)
         let oc = open_out (basename ^ ".ll") in fprintf oc "%s\n" (Llvm.string_of_llmodule m); close_out oc;
       | Error -> print_string invalid_arg_string
