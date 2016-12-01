@@ -38,7 +38,6 @@ clean:
 	ocamlbuild -clean
 	rm -rf testall.log *.diff maze scanner.ml parser.ml parser.mli
 	rm -rf *.cmx *.cmi *.cmo *.o *.out *.ll
-	rm tests/*.ll
 
 
 
