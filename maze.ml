@@ -57,7 +57,7 @@ Analyzer2.check program;
         (*print_string (Llvm.string_of_llmodule m);*)
         (*Llvm.dump_module m;*)
         let oc = open_out (basename ^ ".ll") in fprintf oc "%s\n" (Llvm.string_of_llmodule m); close_out oc;
-      | Error -> print_string invalid_arg_string
+      | Error -> print_string (invalid_arg_string ^ "\n")
        
 
 
