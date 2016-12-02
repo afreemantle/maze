@@ -1,0 +1,11 @@
+class test {
+    void main (string args) {
+        
+        int i = 0;
+
+	while(i < 5){
+	    print(i);
+            i = i + 1;
+        }
+    }
+}
