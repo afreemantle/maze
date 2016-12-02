@@ -41,7 +41,7 @@ let translate (classes) =
         A.Int -> i32_t 
       | A.Bool -> i1_t
       | A.Void -> void_t
-      | A.String -> i32_t (* i32_t just placeholder from here down *) 
+      | A.String -> i32_t 
       | A.Float -> f_t
       | A.Char -> i8_t
       | A.Null -> i32_t in
@@ -96,12 +96,18 @@ let translate (classes) =
         let builder = 
             L.builder_at_end context (L.entry_block the_function) in
 
-        (* this will only print ints right now *)
+        (* print *)
         let int_format_str =
             L.build_global_stringptr "%d\n" "fmt" builder in
         let str_format_str =
             L.build_global_stringptr "%s\n" "fmt" builder in  (* <-- SLOPPY *)
+        let char_format_str =
+	    L.build_global_stringptr "%c\n" "fmt" builder in
 
+        let float_format_str = 
+	    L.build_global_stringptr "%f\n" "fmt" builder in (* adds zeros to end of number *)
+
+      
         (* For the cool TADS like feature I am going to 
          * need to do string formatting *)
 
@@ -125,8 +131,9 @@ let translate (classes) =
    
     let check_print_input = function
         A.Int_Lit e -> int_format_str
-      | A.String_Lit e -> str_format_str in
-
+      | A.String_Lit e -> str_format_str 
+      | A.Char_Lit c -> char_format_str 
+      | A.Float_Lit f -> float_format_str in
     (* Generate code for an expression *)
 
     let rec expr builder = function 
@@ -166,9 +173,33 @@ let translate (classes) =
         | A.Expr e -> ignore (expr builder e); builder
 
         | A.Return e -> ignore (match (typ_of_datatype fdecl.A.returnType) with
-            A.Void -> L.build_ret_void builder
-          | _ -> L.build_ret (expr builder e) builder); builder in
+          A.Void -> L.build_ret_void builder
+        | _ -> L.build_ret (expr builder e) builder); builder
+         
+        | A.If (pred, then_stmt, else_stmt) ->
+	    let bool_val = expr builder pred in
+	    let merge_bb = L.append_block context "merge" the_function in
+	    let then_bb = L.append_block context "then" the_function in
+	    add_terminal (stmt (L.builder_at_end context then_bb) then_stmt) (L.build_br merge_bb);
+	    let else_bb = L.append_block context "else" the_function in
+	    add_terminal (stmt (L.builder_at_end context else_bb) else_stmt) (L.build_br merge_bb);
 
+	    ignore (L.build_cond_br bool_val then_bb else_bb builder);
+	    L.builder_at_end context merge_bb 
+
+        | A.While (pred, body) ->
+	   let pred_bb = L.append_block context "while" the_function in
+	   ignore (L.build_br pred_bb builder);
+	   let body_bb = L.append_block context "while_body" the_function in
+	   add_terminal (stmt (L.builder_at_end context body_bb) body) (L.build_br pred_bb);
+	   let pred_builder = L.builder_at_end context pred_bb in
+	   let bool_val = expr pred_builder pred in
+	   let merge_bb = L.append_block context "merge" the_function in
+	   ignore (L.build_cond_br bool_val body_bb merge_bb pred_builder);
+	   L.builder_at_end context merge_bb
+
+in
+         
 
       (* Code for each statement in the function *)
       let builder = stmt builder (A.Block fdecl.A.body) in
