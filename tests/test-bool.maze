@@ -1,0 +1,8 @@
+class test {
+    void main (string args) {
+	    print(true);
+            print(false);
+            print(1==1);
+            print(2==3);
+    }
+}
