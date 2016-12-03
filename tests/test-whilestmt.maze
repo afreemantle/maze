@@ -1,10 +1,11 @@
 class test {
     void main (string args) {
         
-        int i = 0;
+        int i;
+        i = 0;
 
 	while(i < 5){
-	    print(i);
+	    print("while loop");
             i = i + 1;
         }
     }
