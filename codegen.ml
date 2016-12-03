@@ -133,7 +133,8 @@ let translate (classes) =
         A.Int_Lit e -> int_format_str
       | A.String_Lit e -> str_format_str 
       | A.Char_Lit c -> char_format_str 
-      | A.Float_Lit f -> float_format_str in
+      | A.Float_Lit f -> float_format_str 
+      | A.Binop (e1, op, e2) -> int_format_str (expr builder) in 
     (* Generate code for an expression *)
 
     let rec expr builder = function 
