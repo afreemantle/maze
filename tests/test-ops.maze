@@ -1,0 +1,31 @@
+class test {
+    void main (string args) {
+        
+	int x;
+	int y;
+	int z;
+	int a;
+
+	x = 3 + 7;
+        y = 10 - 2;
+	z = 3 * 2;
+	a = 50 / 10;
+
+	if(x==10){
+	    print("add");
+	}
+	
+	if(y==8){
+	    print("sub");
+	}
+
+	if(z==6){
+	    print("mult");
+ 	}
+
+	if(a==5){
+	    print("div");
+	}
+
+    }
+}
