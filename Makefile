@@ -1,4 +1,4 @@
-OBJS = ast.cmx codegen.cmx parser.cmx scanner.cmx analyzer.cmx maze.cmx 
+OBJS = ast.cmx codegen.cmx parser.cmx scanner.cmx analyzer.cmx exceptions.cmx maze.cmx 
 
 maze : $(OBJS)
 	ocamlfind ocamlopt -linkpkg -package llvm str.cmxa -package llvm.analysis $(OBJS) -o maze 
