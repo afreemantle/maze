@@ -57,7 +57,7 @@ let check classes =
 
 
   (* -------------------- Verify function section -------------------- *)
-  let check_methods_class someClass =
+  (*let check_methods_class someClass =*)
   let string_of_fname = function
       FName(s) -> s
     | Constructor -> ""
@@ -69,15 +69,36 @@ let check classes =
   in
       
   (*let check_methods_class someClass = *)
-  let methods = someClass.dbody.methods in
+  (*let methods = someClass.dbody.methods in
       check_for_print methods;
       report_duplicate (fun n -> "duplicate function " ^ n)
         (List.map (fun f -> string_of_fname f.fname) methods);
-  in 
+  in *)
   
 
   let built_in_decls = StringMap.add "print"
      { returnType = Datatype(Void); fname = FName("print"); formals = [Formal(Datatype(String), "")]; locals = []; body = [] }
+  in
+
+  let build_f_decls funcList = 
+      List.fold_left (fun m f -> StringMap.add (string_of_fname f.fname) f) built_in_decls funcList
+  in
+
+  let function_decl s someMap = try StringMap.find s someMap
+       with Not_found -> raise (Failure ("unrecognized function " ^ s))
+  in
+
+  let print_fname fname = print_string(fname ^ " . \n") in
+
+  let check_methods_class someClass =
+      let methods = someClass.dbody.methods in
+        let function_decls = build_f_decls methods in
+        (*StringMap.iter print_fname function_decls;*)
+        (*function_decl "tfunc" function_decls; *)
+        check_for_print methods;
+        report_duplicate (fun n -> "duplicate function " ^ n)
+                (List.map (fun f -> string_of_fname f.fname) methods)(*in*)
+        (*let function_decls = build_f_decls methods*)
   in
 
 
