@@ -86,7 +86,7 @@ Check() {
 
     
     generatedfiles="$generatedfiles ${basename}.ll ${basename}.out" &&
-    $MAZE '-c' "${reffile}.maze"     
+    $MAZE '-c' "${reffile}.maze"   
     $LLI "${reffile}.ll" > "${basename}.out"
     Compare ${basename}.out ${reffile}.out ${basename}.diff
 
@@ -119,8 +119,7 @@ CheckFail() {
     generatedfiles=""
 
     generatedfiles="$generatedfiles ${basename}.err ${basename}.diff" &&
-    #SHOULD UNCOMMENT THESE AFTER WE IMPLEMENT EXCEPTIONS 
-    RunFail "$MAZE" "<" $1 "2>" "${basename}.err" ">>" $globallog &&
+    RunFail "$MAZE -c  ${reffile}.maze" "2>" "${basename}.err" ">>" $globallog &&
     Compare ${basename}.err ${reffile}.err ${basename}.diff
 
     # Report the status and clean up the generated files
