@@ -28,8 +28,6 @@ let check classes =
 
   (* Raise an exception if a given binding is to a void type *)
   let check_not_void exceptf = function
-      (*Field(Void, n) -> raise (Failure (exceptf n))  
-    | Field(t, n) -> print_endline (string_of_datatype t)*)
       Field(t, n) -> if typ_of_datatype t == Void then raise (Failure (exceptf n)) else ()
   in
 
