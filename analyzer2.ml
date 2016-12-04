@@ -33,7 +33,6 @@ let check classes =
       (*Field(Void, n) -> raise (Failure (exceptf n))  
     | Field(t, n) -> print_endline (string_of_datatype t)*)
     | Field(t, n) -> if typ_of_datatype t == Void then raise (Failure (exceptf n)) else ()
-  in
 
   (* Grabs second element of Field (vdecl) *)
   let get_second = function
