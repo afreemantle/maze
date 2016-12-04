@@ -1,0 +1,7 @@
+class test {
+    int x;
+    int x;
+    void main (string args) {
+        int y;
+    }
+}
