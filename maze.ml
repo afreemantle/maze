@@ -45,7 +45,7 @@ let program = Parser.program Scanner.token lexbuf in
 let filename_list = Str.split (regexp "[.]") filename in
 let basename = List.hd filename_list in
 
-Analyzer2.check program;
+Analyzer.check program;
 
     match action with 
         Help -> print_string help_string 
