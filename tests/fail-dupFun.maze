@@ -1,0 +1,7 @@
+class test {
+    void test (string args) {
+        int y;
+    }
+
+    void test (){}
+}
