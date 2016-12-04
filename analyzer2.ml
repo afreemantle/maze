@@ -49,7 +49,13 @@ let check classes =
       List.iter check_locals_lists someClass.dbody.methods;
   in
 
+  let check_class_vars someClass =
+      List.iter (check_not_void (fun n -> "illegal void variable " ^ n)) someClass.dbody.vdecls;
+      report_duplicate (fun n -> "duplicate variable " ^ n) (List.map get_second someClass.dbody.vdecls);
+  in
+
   List.iter check_locals_class classes;
+  List.iter check_class_vars classes;
 
 
   (* -------------------- Verify function section -------------------- *)
