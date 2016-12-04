@@ -16,9 +16,7 @@ let check classes =
     in helper (List.sort compare list)
   in
 
-  (*let name_of_cdecl = function*)
-        
-
+  (* Check for duplicate class names *)
   report_duplicate (fun n -> "Duplicate class name " ^ n) (List.map (fun n -> n.dname) classes);
 
   (* Helper function for check_not_void *)
@@ -32,7 +30,8 @@ let check classes =
   let check_not_void exceptf = function
       (*Field(Void, n) -> raise (Failure (exceptf n))  
     | Field(t, n) -> print_endline (string_of_datatype t)*)
-    | Field(t, n) -> if typ_of_datatype t == Void then raise (Failure (exceptf n)) else ()
+      Field(t, n) -> if typ_of_datatype t == Void then raise (Failure (exceptf n)) else ()
+  in
 
   (* Grabs second element of Field (vdecl) *)
   let get_second = function
