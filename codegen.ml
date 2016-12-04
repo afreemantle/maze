@@ -100,7 +100,7 @@ let translate (classes) =
         let int_format_str =
             L.build_global_stringptr "%d\n" "fmt" builder in
         let str_format_str =
-            L.build_global_stringptr "%s\n" "fmt" builder in  (* <-- SLOPPY *)
+            L.build_global_stringptr "%s\n" "fmt" builder in  
         let char_format_str =
 	    L.build_global_stringptr "%c\n" "fmt" builder in
 
@@ -128,14 +128,7 @@ let translate (classes) =
     
     (* in MicroC, this lookup funtion finds the value for a variable *)
     let lookup n = StringMap.find n local_vars in
-   
-    let print_id_val i = function
-        A.Int_Lit e -> int_format_str
-      | A.String_Lit e -> str_format_str 
-      | A.Char_Lit c -> char_format_str 
-      | A.Float_Lit f -> float_format_str 
-      | A.Bool_Lit b -> int_format_str 
-    in     
+    
 
     let check_print_input = function
         A.Int_Lit e -> int_format_str
@@ -144,7 +137,7 @@ let translate (classes) =
       | A.Float_Lit f -> float_format_str 
       | A.Binop (e1, op, e2) -> int_format_str 
       | A.Bool_Lit b -> int_format_str 
-      | A.Id s -> print_id_val (lookup s)  in 
+      | A.Id s -> str_format_str in 
     (* Generate code for an expression *)
 
     let rec expr builder = function 
