@@ -1,0 +1,7 @@
+class test {
+    void main (string args) {
+        int x;
+    }
+
+    void print (string s){}
+}
