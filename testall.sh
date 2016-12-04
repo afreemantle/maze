@@ -86,8 +86,7 @@ Check() {
 
     
     generatedfiles="$generatedfiles ${basename}.ll ${basename}.out" &&
-    #$MAZE '-c' "${reffile}.maze"   
-    Run "$MAZE -c ${reffile}.maze" 
+    Run "$MAZE -c ${reffile}.maze"  
     $LLI "${reffile}.ll" > "${basename}.out"
     Compare ${basename}.out ${reffile}.out ${basename}.diff
 
