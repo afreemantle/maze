@@ -85,6 +85,6 @@ let check classes =
 
   (*let function_decls = List.fold_left (fun m f -> StringMap.add (string_of_fname f.fname) f m)
                         built_in_decls methods
-  in *)
+  in*) 
 
   List.iter check_methods_class classes;
