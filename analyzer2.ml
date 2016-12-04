@@ -5,7 +5,7 @@ module StringMap = Map.Make(String)
 
 let check classes =
 
-  (* ------------------------- Verify variable section ------------------------- *)
+  (* -------------------- Verify variable section -------------------- *)
 
   (* Raise an exception if the given list has a duplicate *)
   let report_duplicate exceptf list =
@@ -15,6 +15,11 @@ let check classes =
       | [] -> ()
     in helper (List.sort compare list)
   in
+
+  (*let name_of_cdecl = function*)
+        
+
+  report_duplicate (fun n -> "Duplicate class name " ^ n) (List.map (fun n -> n.dname) classes);
 
   (* Helper function for check_not_void *)
   let typ_of_datatype = function
@@ -27,7 +32,7 @@ let check classes =
   let check_not_void exceptf = function
       (*Field(Void, n) -> raise (Failure (exceptf n))  
     | Field(t, n) -> print_endline (string_of_datatype t)*)
-    | Field(t, n) -> if typ_of_datatype t == Void then raise (Failure (exceptf n)) else (print_endline n)
+    | Field(t, n) -> if typ_of_datatype t == Void then raise (Failure (exceptf n)) else ()
   in
 
   (* Grabs second element of Field (vdecl) *)
@@ -49,7 +54,7 @@ let check classes =
   List.iter check_locals_class classes;
 
 
-  (* ------------------------- Verify function section ------------------------- *)
+  (* -------------------- Verify function section -------------------- *)
   let check_methods_class someClass =
   let string_of_fname = function
       FName(s) -> s
@@ -62,7 +67,7 @@ let check classes =
   in
       
   (*let check_methods_class someClass = *)
-      let methods = someClass.dbody.methods in
+  let methods = someClass.dbody.methods in
       check_for_print methods;
       report_duplicate (fun n -> "duplicate function " ^ n)
         (List.map (fun f -> string_of_fname f.fname) methods);
