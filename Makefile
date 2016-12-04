@@ -36,6 +36,7 @@ parser.cmi : ast.cmo
 .PHONY : clean
 clean: 
 	ocamlbuild -clean
+	rm -rf ./tests/*.ll
 	rm -rf testall.log *.diff maze scanner.ml parser.ml parser.mli
 	rm -rf *.cmx *.cmi *.cmo *.o *.out *.ll
 
