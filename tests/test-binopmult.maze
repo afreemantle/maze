@@ -1,0 +1,5 @@
+class test {
+    void main(string args){
+        print(5 * 5);
+    }
+}

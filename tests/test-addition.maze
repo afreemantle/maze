@@ -1,0 +1,11 @@
+class test {
+    void main (string args) {
+        
+	int x;
+	x = 3 + 7;
+
+	if(x==10){
+	    print("correct");
+	}
+    }
+}
