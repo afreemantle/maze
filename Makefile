@@ -1,4 +1,4 @@
-OBJS = ast.cmx codegen.cmx parser.cmx scanner.cmx analyzer2.cmx maze.cmx 
+OBJS = ast.cmx codegen.cmx parser.cmx scanner.cmx analyzer.cmx maze.cmx 
 
 maze : $(OBJS)
 	ocamlfind ocamlopt -linkpkg -package llvm str.cmxa -package llvm.analysis $(OBJS) -o maze 
@@ -23,14 +23,14 @@ ast.cmo :
 ast.cmx :
 codegen.cmo : ast.cmo
 codegen.cmx : ast.cmx	
-maze.cmo : analyzer2.cmo scanner.cmo parser.cmi codegen.cmo ast.cmo
-maze.cmx : analyzer2.cmx scanner.cmx parser.cmx codegen.cmx ast.cmx
+maze.cmo : analyzer.cmo scanner.cmo parser.cmi codegen.cmo ast.cmo
+maze.cmx : analyzer.cmx scanner.cmx parser.cmx codegen.cmx ast.cmx
 parser.cmo : ast.cmo parser.cmi
 parser.cmx : ast.cmx parser.cmi
 scanner.cmo : parser.cmi
 scanner.cmx : parser.cmx
-analyzer2.cmo: ast.cmo
-analyzer2.cmx: ast.cmx
+analyzer.cmo: ast.cmo
+analyzer.cmx: ast.cmx
 parser.cmi : ast.cmo
 
 .PHONY : clean
