@@ -25,7 +25,7 @@ let check classes =
   let check_not_void exceptf = function
       (*Field(Void, n) -> raise (Failure (exceptf n))  
     | Field(t, n) -> print_endline (string_of_datatype t)*)
-    | Field(t, n) -> if typ_of_datatype t == Void then raise (Failure (exceptf n)) else (print_endline n)
+    | Field(t, n) -> if typ_of_datatype t == Void then raise (Failure (exceptf n)) else print_string "" 
   in
 
   let get_second = function
