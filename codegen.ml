@@ -2,6 +2,7 @@
 
 module L = Llvm
 module A = Ast
+module E = Exceptions
 
 module StringMap = Map.Make(String)
 
@@ -135,7 +136,8 @@ let translate (classes) =
       | A.Char_Lit c -> char_format_str 
       | A.Float_Lit f -> float_format_str 
       | A.Binop (e1, op, e2) -> int_format_str 
-      | A.Bool_Lit b -> int_format_str  in 
+      | A.Bool_Lit b -> int_format_str  
+      | a -> raise(E.InvalidArgs) in
     (* Generate code for an expression *)
 
     let rec expr builder = function 
