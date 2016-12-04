@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Regression testing script for MicroC
+# Regression testing script for Maze
 # Step through a list of files
 #  Compile, run, and check the output of each expected-to-work test
 #  Compile and check the error of each expected-to-fail test
@@ -9,10 +9,9 @@
 LLI="lli"
 #LLI="/usr/local/opt/llvm/bin/lli"
 
-# Path to the microc compiler.  Usually "./microc.native"
-# Try "_build/microc.native" if ocamlbuild was unable to create a symbolic link.
-MICROC="./microc.native"
-#MICROC="_build/microc.native"
+# Path to the maze compiler.
+MAZE="./maze"
+#MAZE="./maze"
 
 # Set time limit for all operations
 ulimit -t 30
@@ -25,7 +24,7 @@ globalerror=0
 keep=0
 
 Usage() {
-    echo "Usage: testall.sh [options] [.mc files]"
+    echo "Usage: testall.sh [options] [.maze files]"
     echo "-k    Keep intermediate files"
     echo "-h    Print this help"
     exit 1
@@ -74,8 +73,8 @@ RunFail() {
 Check() {
     error=0
     basename=`echo $1 | sed 's/.*\\///
-                             s/.mc//'`
-    reffile=`echo $1 | sed 's/.mc$//'`
+                             s/.maze//'`
+    reffile=`echo $1 | sed 's/.maze$//'`
     basedir="`echo $1 | sed 's/\/[^\/]*$//'`/."
 
     echo -n "$basename..."
@@ -85,9 +84,10 @@ Check() {
 
     generatedfiles=""
 
+    
     generatedfiles="$generatedfiles ${basename}.ll ${basename}.out" &&
-    Run "$MICROC" "<" $1 ">" "${basename}.ll" &&
-    Run "$LLI" "${basename}.ll" ">" "${basename}.out" &&
+    $MAZE '-c' "${reffile}.maze"     
+    $LLI "${reffile}.ll" > "${basename}.out"
     Compare ${basename}.out ${reffile}.out ${basename}.diff
 
     # Report the status and clean up the generated files
@@ -107,8 +107,8 @@ Check() {
 CheckFail() {
     error=0
     basename=`echo $1 | sed 's/.*\\///
-                             s/.mc//'`
-    reffile=`echo $1 | sed 's/.mc$//'`
+                             s/.maze//'`
+    reffile=`echo $1 | sed 's/.maze$//'`
     basedir="`echo $1 | sed 's/\/[^\/]*$//'`/."
 
     echo -n "$basename..."
@@ -119,8 +119,9 @@ CheckFail() {
     generatedfiles=""
 
     generatedfiles="$generatedfiles ${basename}.err ${basename}.diff" &&
-    RunFail "$MICROC" "<" $1 "2>" "${basename}.err" ">>" $globallog &&
-    Compare ${basename}.err ${reffile}.err ${basename}.diff
+    #SHOULD UNCOMMENT THESE AFTER WE IMPLEMENT EXCEPTIONS 
+    #RunFail "$MAZE" "<" $1 "2>" "${basename}.err" ">>" $globallog &&
+    #Compare ${basename}.err ${reffile}.err ${basename}.diff
 
     # Report the status and clean up the generated files
 
@@ -162,7 +163,7 @@ if [ $# -ge 1 ]
 then
     files=$@
 else
-    files="tests/test-*.mc tests/fail-*.mc"
+    files="tests/test-*.maze tests/fail-*.maze"
 fi
 
 for file in $files

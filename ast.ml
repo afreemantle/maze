@@ -11,7 +11,9 @@ type datatype = Datatype of typ | Arraytype of typ * int | Any
 
 type fname = Constructor | FName of string
 
-type formal = Formal of datatype * string | Many of datatype
+type formal = Formal of datatype * string
+
+type bind = typ * string
 
 type expr = Int_Lit of int
 	    | Id of string
@@ -154,7 +156,6 @@ Field(t, id) -> (string_of_datatype t) ^ " " ^ id ^ ";\n" *)
 
 let string_of_formal = function
 Formal(d, s) -> (string_of_datatype d) ^ " " ^ s
-| _ -> ""
 
 
 let string_of_func_decl fdecl = (string_of_datatype fdecl.returnType) ^ " " ^ (string_of_fname fdecl.fname) ^ " " ^

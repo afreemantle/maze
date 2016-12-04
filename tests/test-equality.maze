@@ -1,0 +1,29 @@
+class test {
+    void main (string args) {
+        
+	if(42<50){
+            print("less");
+        }
+
+        if(60>3){
+	    print("greater");
+  	}
+
+	if(100==100){
+	    print("equal");
+	}
+
+	if(30!=53){
+	    print("not equal");
+	}
+
+	if(10<=40){
+	    print("leq");
+	}
+
+	if(50>=50){
+	    print("geq");
+	}
+	
+    }
+}

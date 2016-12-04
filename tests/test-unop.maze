@@ -1,0 +1,12 @@
+class test {
+    void main (string args) {
+        
+        if(!false){
+	    print("correct");
+	}
+
+	if(3 != -3){
+	    print("correct");
+	}
+    }
+}
