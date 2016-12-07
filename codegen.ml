@@ -130,23 +130,14 @@ let translate (classes) =
     let lookup n = StringMap.find n local_vars in
     
 
-   (*  let check_print_input = function 
-        A.Int -> int_format_str 
-      | A.Bool ->  int_format_str 
-      | A.String -> str_format_str  
-      | A.Char -> char_format_str in *)
-
-    let check_print_input = function 
-        _ -> str_format_str in
-
-    let check_printlit_input = function
+    let check_print_input = function
         A.Int_Lit e -> int_format_str
       | A.String_Lit e -> str_format_str 
       | A.Char_Lit c -> char_format_str 
       | A.Float_Lit f -> float_format_str 
       | A.Binop (e1, op, e2) -> int_format_str 
       | A.Bool_Lit b -> int_format_str 
-      | A.Id s -> check_print_input (lookup s) in 
+      | A.Id s -> str_format_str in 
     (* Generate code for an expression *)
 
     let rec expr builder = function 
@@ -183,7 +174,7 @@ let translate (classes) =
       | A.Char_Lit c -> L.const_int i8_t (Char.code c)
       | A.Null -> L.const_null i32_t
       | A.Call ("print", [e]) -> L.build_call printf_func
-                 [| check_printlit_input e; (expr builder e) |]
+                 [| check_print_input e; (expr builder e) |]
                  "printf" builder
       (* This evaluates arguments backwards *)
       | A.Call (f, act) ->
