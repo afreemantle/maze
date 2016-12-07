@@ -2,25 +2,20 @@ class test {
     void main (string args) {
         int x;
         int y;
-        string z;
         x = 15;
         y = 20;
-        z = "zzzzzzz";
         
         if (x == 0) {
            print(x);
         }
 
-        print(z);
-
-        while(x != 0)
+        while(x != y)
         {
             if ( x > y) {
-                x=x-y;
+                x= x-y;
             } else {
                 y= y-x;
             }
         }
-        print(y);
     }
 }
