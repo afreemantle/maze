@@ -1,0 +1,5 @@
+class test {
+    void main(){
+        print(4114 + 1);
+    }
+}
