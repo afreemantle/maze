@@ -1,5 +1,5 @@
 class test {
-    void main(string args){
+    void main(){
         print(5 * 5);
     }
 }
