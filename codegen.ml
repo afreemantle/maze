@@ -28,7 +28,8 @@ let translate (classes) =
     and i8_t = L.i8_type context        (* printf *)
     and i1_t = L.i1_type context        (* bool *)
     and f_t = L.double_type context     (* float *)
-    and void_t = L.void_type context in (* void *)
+    and void_t = L.void_type context    (* void *)
+    and str_t = L.pointer_type (L.i8_type context) in
     (* add our other types here *)
 
     let typ_of_datatype = function
@@ -41,7 +42,7 @@ let translate (classes) =
         A.Int -> i32_t 
       | A.Bool -> i1_t
       | A.Void -> void_t
-      | A.String -> i32_t 
+      | A.String -> str_t
       | A.Float -> f_t
       | A.Char -> i8_t
       | A.Null -> i32_t in
@@ -136,10 +137,7 @@ let translate (classes) =
       | A.Char -> char_format_str in *)
 
     let check_print_input = function 
-        int -> int_format_str 
-      | bool ->  int_format_str 
-      | string -> str_format_str  
-      | char -> char_format_str in
+        _ -> str_format_str in
 
     let check_printlit_input = function
         A.Int_Lit e -> int_format_str
