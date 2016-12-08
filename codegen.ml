@@ -128,7 +128,11 @@ let translate (classes) =
     
     (* in MicroC, this lookup funtion finds the value for a variable *)
     let lookup n = StringMap.find n local_vars in
-    
+   
+    let type_of_ltype = function 
+        i32_t -> int_format_str
+      | str_t -> str_format_str
+    in 
 
     let check_print_input = function
         A.Int_Lit e -> int_format_str
@@ -137,7 +141,8 @@ let translate (classes) =
       | A.Float_Lit f -> float_format_str 
       | A.Binop (e1, op, e2) -> int_format_str 
       | A.Bool_Lit b -> int_format_str 
-      | A.Id s -> str_format_str in 
+      | A.Id s -> type_of_ltype (L.type_of (lookup s)) in 
+    
     (* Generate code for an expression *)
 
     let rec expr builder = function 

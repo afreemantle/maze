@@ -17,5 +17,6 @@ class test {
                 y= y-x;
             }
         }
+        print(x);
     }
 }
