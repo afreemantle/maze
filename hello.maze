@@ -1,5 +1,0 @@
-class test {
-    void main (string args) {
-        print("Hello World");
-    }
-}
