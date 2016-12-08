@@ -129,10 +129,11 @@ let translate (classes) =
     (* in MicroC, this lookup funtion finds the value for a variable *)
     let lookup n = StringMap.find n local_vars in
    
-    let check_id_val_type = function 
-        "i32_t" -> str_format_str
-      | "str_t" -> str_format_str
-      | "pointer_type" -> int_format_str
+    let type_of_val = function 
+        "i32*" -> int_format_str (*int*)
+      | "i8**" -> str_format_str (*string*)
+      | "i8*" -> char_format_str (*char*)
+      | "i1*" -> int_format_str (*bool*)
     in 
 
     let check_print_input = function
@@ -142,9 +143,7 @@ let translate (classes) =
       | A.Float_Lit f -> float_format_str 
       | A.Binop (e1, op, e2) -> int_format_str 
       | A.Bool_Lit b -> int_format_str 
-     (* | A.Id s -> check_id_val_type (L.string_of_lltype(L.type_of (lookup s)))  *)
-
-      | A.Id s -> raise(Failure (L.string_of_lltype(L.type_of (lookup s))))
+      | A.Id s -> type_of_val (L.string_of_lltype(L.type_of (lookup s)))  
     in 
     
     (* Generate code for an expression *)
