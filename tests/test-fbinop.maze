@@ -1,0 +1,11 @@
+class test {
+    void main (){
+
+        float x; 
+	x = 3.2 + 4.5;
+
+	if(x == 7.700000){
+            print("correct");
+	}
+    }
+}
