@@ -5,7 +5,22 @@ class test {
 	x = 3.2 + 4.5;
 
 	if(x == 7.700000){
-            print("correct");
+            print("add");
+	}
+
+        x = 5.4 - 2.2;
+	if(x == 3.200000){
+	    print("sub");
+	}
+
+	x = 4.2 * 6.8;
+	if(x == 28.560000){
+	   print("mult");
+	} 
+
+	x = 4.6 / 2.3;
+	if(x == 2.000000){	
+	    print("div");
 	}
     }
 }
