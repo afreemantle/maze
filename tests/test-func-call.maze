@@ -1,0 +1,12 @@
+class test {
+    
+    void dummy(){
+        int x;
+        x = 1; 
+        print(x);
+    }
+
+    int main(){
+        dummy();
+    }
+}
