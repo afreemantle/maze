@@ -156,8 +156,23 @@ let translate (classes) =
       | A.Id s -> L.build_load (lookup s) s builder
       | A.Binop (e1, op, e2) ->
 	  let e1' = expr builder e1
-	  and e2' = expr builder e2 in
-	  (match op with
+	  and e2' = expr builder e2 
+	  and float_ops = (match op with
+	    A.Add     -> L.build_fadd
+	  | A.Sub     -> L.build_fsub
+	  | A.Mult    -> L.build_fmul
+          | A.Div     -> L.build_fdiv
+	  | A.And     -> L.build_and
+	  | A.Or      -> L.build_or
+	  | A.Equal   -> L.build_fcmp L.Fcmp.Oeq
+	  | A.Neq     -> L.build_fcmp L.Fcmp.One
+	  | A.Less    -> L.build_fcmp L.Fcmp.Olt
+	  | A.Leq     -> L.build_fcmp L.Fcmp.Ole
+	  | A.Greater -> L.build_fcmp L.Fcmp.Ogt
+	  | A.Geq     -> L.build_fcmp L.Fcmp.Oge
+	  )
+ 
+          and int_ops = match op with
 	    A.Add     -> L.build_add
 	  | A.Sub     -> L.build_sub
 	  | A.Mult    -> L.build_mul
@@ -169,8 +184,11 @@ let translate (classes) =
 	  | A.Less    -> L.build_icmp L.Icmp.Slt
 	  | A.Leq     -> L.build_icmp L.Icmp.Sle
 	  | A.Greater -> L.build_icmp L.Icmp.Sgt
-	  | A.Geq     -> L.build_icmp L.Icmp.Sge
-	  ) e1' e2' "tmp" builder
+	  | A.Geq     -> L.build_icmp L.Icmp.Sge in
+          if(L.type_of e1' = f_t || L.type_of e2' = f_t) then float_ops e1' e2' "tmp" builder
+	  else int_ops e1' e2' "tmp" builder
+
+
       | A.Unop(op, e) ->
 	  let e' = expr builder e in
 	  (match op with
