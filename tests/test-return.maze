@@ -1,0 +1,14 @@
+class test {
+
+    int computeValue(int x, int y){
+        return x + y;
+    }
+
+    void main(){
+   
+        int a;
+	a = computeValue(10,5);
+	print(a); 
+	
+    }
+}
