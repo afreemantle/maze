@@ -1,0 +1,9 @@
+class test {
+    void main () {
+        
+        if(false){}
+	else{}
+
+	print("empty");
+    }
+}
