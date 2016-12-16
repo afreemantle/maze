@@ -1,0 +1,20 @@
+class test {
+    void main () {
+        
+        if(false){
+	    print("if");
+	}
+
+	else if(false){
+	   print("elseif1");
+        }
+
+	else if(false){
+	    print("elseif2");
+	}
+
+	else{
+	    print("else");
+	}
+    }
+}
