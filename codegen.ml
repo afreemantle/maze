@@ -127,6 +127,12 @@ let translate (classes) =
         List.fold_left add_local formals (List.map typeKey_of_local fdecl.A.locals) in
     
     (* in MicroC, this lookup funtion finds the value for a variable *)
+    let func_lookup fname =
+	match (L.lookup_function fname the_module) with
+	   None -> raise(Failure("LLVM Function Not Found"))
+ 	 | Some f -> f
+    in
+
     let lookup n = StringMap.find n local_vars in
    
     let type_of_val = function 
@@ -187,6 +193,12 @@ let translate (classes) =
 	  | A.Geq     -> L.build_icmp L.Icmp.Sge in
           if(L.type_of e1' = f_t || L.type_of e2' = f_t) then float_ops e1' e2' "tmp" builder
 	  else int_ops e1' e2' "tmp" builder
+
+      | A.ObjCreate(id, e1) ->
+	  let f = func_lookup id in
+	  let params = List.map (expr builder) e1 in
+	  let obj = L.build_call f (Array.of_list params) "tmp" builder in
+	  obj
 
 
       | A.Unop(op, e) ->
