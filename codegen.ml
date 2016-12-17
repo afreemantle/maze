@@ -28,7 +28,8 @@ let translate (classes) =
     and i8_t = L.i8_type context        (* printf *)
     and i1_t = L.i1_type context        (* bool *)
     and f_t = L.double_type context     (* float *)
-    and void_t = L.void_type context in (* void *)
+    and void_t = L.void_type context    (* void *)
+    and str_t = L.pointer_type (L.i8_type context) in
     (* add our other types here *)
 
     let typ_of_datatype = function
@@ -41,7 +42,7 @@ let translate (classes) =
         A.Int -> i32_t 
       | A.Bool -> i1_t
       | A.Void -> void_t
-      | A.String -> i32_t 
+      | A.String -> str_t
       | A.Float -> f_t
       | A.Char -> i8_t
       | A.Null -> i32_t in
@@ -100,10 +101,9 @@ let translate (classes) =
         let int_format_str =
             L.build_global_stringptr "%d\n" "fmt" builder in
         let str_format_str =
-            L.build_global_stringptr "%s\n" "fmt" builder in  (* <-- SLOPPY *)
+            L.build_global_stringptr "%s\n" "fmt" builder in  
         let char_format_str =
 	    L.build_global_stringptr "%c\n" "fmt" builder in
-
         let float_format_str = 
 	    L.build_global_stringptr "%f\n" "fmt" builder in (* adds zeros to end of number *)
 
@@ -127,15 +127,32 @@ let translate (classes) =
         List.fold_left add_local formals (List.map typeKey_of_local fdecl.A.locals) in
     
     (* in MicroC, this lookup funtion finds the value for a variable *)
+    let func_lookup fname =
+	match (L.lookup_function fname the_module) with
+	   None -> raise(Failure("LLVM Function Not Found"))
+ 	 | Some f -> f
+    in
+
     let lookup n = StringMap.find n local_vars in
-   
+    
+    let type_of_val = function 
+        "i32*" -> int_format_str (*int*)
+      | "i8**" -> str_format_str (*string*)
+      | "i8*" -> char_format_str (*char*)
+      | "i1*" -> int_format_str (*bool*)
+      | "double*" -> float_format_str (*float*)
+    in 
+
     let check_print_input = function
         A.Int_Lit e -> int_format_str
       | A.String_Lit e -> str_format_str 
       | A.Char_Lit c -> char_format_str 
       | A.Float_Lit f -> float_format_str 
       | A.Binop (e1, op, e2) -> int_format_str 
-      | A.Bool_Lit b -> int_format_str  in 
+      | A.Bool_Lit b -> int_format_str 
+      | A.Id s -> type_of_val(L.string_of_lltype(L.type_of (lookup s))) 
+    in 
+    
     (* Generate code for an expression *)
 
     let rec expr builder = function 
@@ -146,8 +163,23 @@ let translate (classes) =
       | A.Id s -> L.build_load (lookup s) s builder
       | A.Binop (e1, op, e2) ->
 	  let e1' = expr builder e1
-	  and e2' = expr builder e2 in
-	  (match op with
+	  and e2' = expr builder e2 
+	  and float_ops = (match op with
+	    A.Add     -> L.build_fadd
+	  | A.Sub     -> L.build_fsub
+	  | A.Mult    -> L.build_fmul
+          | A.Div     -> L.build_fdiv
+	  | A.And     -> L.build_and
+	  | A.Or      -> L.build_or
+	  | A.Equal   -> L.build_fcmp L.Fcmp.Oeq
+	  | A.Neq     -> L.build_fcmp L.Fcmp.One
+	  | A.Less    -> L.build_fcmp L.Fcmp.Olt
+	  | A.Leq     -> L.build_fcmp L.Fcmp.Ole
+	  | A.Greater -> L.build_fcmp L.Fcmp.Ogt
+	  | A.Geq     -> L.build_fcmp L.Fcmp.Oge
+	  )
+ 
+          and int_ops = match op with
 	    A.Add     -> L.build_add
 	  | A.Sub     -> L.build_sub
 	  | A.Mult    -> L.build_mul
@@ -159,8 +191,17 @@ let translate (classes) =
 	  | A.Less    -> L.build_icmp L.Icmp.Slt
 	  | A.Leq     -> L.build_icmp L.Icmp.Sle
 	  | A.Greater -> L.build_icmp L.Icmp.Sgt
-	  | A.Geq     -> L.build_icmp L.Icmp.Sge
-	  ) e1' e2' "tmp" builder
+	  | A.Geq     -> L.build_icmp L.Icmp.Sge in
+          if(L.type_of e1' = f_t || L.type_of e2' = f_t) then float_ops e1' e2' "tmp" builder
+	  else int_ops e1' e2' "tmp" builder
+
+      | A.ObjCreate(id, e1) ->
+	  let f = func_lookup id in
+	  let params = List.map (expr builder) e1 in
+	  let obj = L.build_call f (Array.of_list params) "tmp" builder in
+	  obj
+
+
       | A.Unop(op, e) ->
 	  let e' = expr builder e in
 	  (match op with
@@ -223,7 +264,6 @@ let translate (classes) =
 	   L.builder_at_end context merge_bb
 
 in
-         
 
       (* Code for each statement in the function *)
       let builder = stmt builder (A.Block fdecl.A.body) in

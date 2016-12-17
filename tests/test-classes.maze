@@ -1,0 +1,13 @@
+class shape {
+
+}
+
+
+class test {
+    void main(){
+
+        print("ok");
+
+    }
+
+}

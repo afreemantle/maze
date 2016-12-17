@@ -2,9 +2,9 @@ class test {
     void main () {
         
 	int x;
-	x = 3 + 7;
+	x = 3 - 7;
 
-	if(x==10){
+	if(x==-4){
 	    print("correct");
 	}
     }

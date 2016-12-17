@@ -3,7 +3,7 @@ type op = Add | Sub | Mult | Div | Equal | Neq |
 
 type uop = Neg | Not
 
-type typ = Int | Bool | Char | String |Float | Void | Null
+type typ = Int | Bool | Char | String | Float | Void | Objecttype of string | Null
 
 type extends = NoParent | Parent of string
 
@@ -26,6 +26,8 @@ type expr = Int_Lit of int
 	    | ArrayTyp of expr list
 	    | ArrayCreate of datatype * expr list
 	    | ArrayAccess of expr * expr
+	    | ObjCreate of string * expr list
+	    | ObjAccess of expr * expr
 	    | Noexpr
 	    | Unop of uop *expr
 	    | Call of string * expr list
@@ -91,6 +93,11 @@ let string_of_typ = function
   | String -> "string"
   | Float -> "float"
   | Null -> "null"
+  | Objecttype(s) -> "class" ^ s
+
+let string_of_object = function
+  Datatype(Objecttype(s)) -> s
+| _ -> ""
 
 
 let string_of_datatype = function
@@ -130,6 +137,9 @@ and string_of_expr = function
   | ArrayTyp(e1) -> "|" ^ string_of_array_typ e1 ^ "|"
   | ArrayCreate(d, e1) -> "new " ^ string_of_datatype d
   | ArrayAccess(e, e1) -> string_of_expr e
+  | ObjAccess(e1, e2) -> string_of_expr e1 ^ "." ^ string_of_expr e2
+  | ObjCreate(s, e1) -> "new" ^ s ^ "(" ^ String.concat ", " (List.map string_of_expr e1) ^ ")"
+
 
 let string_of_vdecl = function        
 Field(t, id) -> (string_of_datatype t) ^ " " ^ id ^ ";\n"

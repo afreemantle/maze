@@ -1,7 +1,7 @@
 class test {
     int x;
     int x;
-    void main (string args) {
+    void main () {
         int y;
     }
 }

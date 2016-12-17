@@ -1,0 +1,22 @@
+class test {
+    void main () {
+        int x;
+        int y;
+        x = 15;
+        y = 20;
+        
+        if (x == 0) {
+           print(x);
+        }
+
+        while(x != y)
+        {
+            if ( x > y) {
+                x= x-y;
+            } else {
+                y= y-x;
+            }
+        }
+        print(x);
+    }
+}

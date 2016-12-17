@@ -23,6 +23,7 @@ rule token = parse
 | '}' {RBRACE}
 | ';' {SEMI}
 | ',' {COMMA}
+| '.' {DOT}
 
 | '+' {PLUS}
 | '-' {MINUS}
@@ -46,6 +47,7 @@ rule token = parse
 | "int" {INT}
 | "bool" {BOOL}
 | "char" {CHAR}
+| "float" {FLOAT}
 | "string" {STRING}
 | "void" {VOID}
 | "true" {TRUE}

@@ -1,5 +1,5 @@
 class test {
-    void main (string args) {
+    void main () {
         void x;
     }
 }

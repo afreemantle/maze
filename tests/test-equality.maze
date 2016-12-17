@@ -1,5 +1,5 @@
 class test {
-    void main (string args) {
+    void main () {
         
 	if(42<50){
             print("less");
