@@ -134,12 +134,13 @@ let translate (classes) =
     in
 
     let lookup n = StringMap.find n local_vars in
-   
+    
     let type_of_val = function 
         "i32*" -> int_format_str (*int*)
       | "i8**" -> str_format_str (*string*)
       | "i8*" -> char_format_str (*char*)
       | "i1*" -> int_format_str (*bool*)
+      | "double*" -> float_format_str (*float*)
     in 
 
     let check_print_input = function
@@ -149,7 +150,7 @@ let translate (classes) =
       | A.Float_Lit f -> float_format_str 
       | A.Binop (e1, op, e2) -> int_format_str 
       | A.Bool_Lit b -> int_format_str 
-      | A.Id s -> type_of_val (L.string_of_lltype(L.type_of (lookup s)))  
+      | A.Id s -> type_of_val((L.string_of_lltype(L.type_of (lookup s)))) 
     in 
     
     (* Generate code for an expression *)
