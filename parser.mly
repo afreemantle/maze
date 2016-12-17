@@ -24,6 +24,7 @@
 %left PLUS MINUS
 %left TIMES DIVIDE
 %right NOT NEG
+%right DOT
 
 %start program
 %type <Ast.program> program
