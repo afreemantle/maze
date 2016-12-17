@@ -32,7 +32,9 @@ let translate (classes) =
     (* add our other types here *)
 
     let struct_field_indexes: (string, int) Hashtbl.t = Hashtbl.create 50 
-    and struct_types:(string, L.lltype) Hashtbl.t = Hashtbl.create 10 in
+    and struct_types:(string, L.lltype) Hashtbl.t = Hashtbl.create 10 
+    and named_values:(string, L.llvalue) Hashtbl.t = Hashtbl.create 50
+    and named_parameters:(string, L.llvalue) Hashtbl.t = Hashtbl.create 50 in
 
 
     let find_exn name = 
@@ -235,7 +237,7 @@ let translate (classes) =
       
       | A.Assign (s, e) -> 
           (*let rhsType = typ_of_datatype e in*)
-	  let lhs  = match s with
+(*	  let lhs  = match s with
 	      A.Id(id) -> L.build_load (lookup s) s builder
 	    | A.ObjAccess(e1, e2) -> expr e1 e2 builder
 	    | _ -> raise(Failure("Must be assignable")) in
@@ -245,7 +247,7 @@ let translate (classes) =
 	    | A.ObjAccess(e1, e2) -> expr e1 e2 builder in
 
 	  ignore(L.build_store rhs lhs builder);
-	  rhs
+	  rhs *)
 
 	(*  let lhs = match s with 
 	    A.Id(id) -> (try Hashtbl.find named_parameters id
@@ -258,8 +260,8 @@ let translate (classes) =
           | _ -> expr e2 builder in
 	  ignore(L.build_store rhs lhs builder);
 	  rhs*)
-		(*let e' = expr builder e in
-                ignore (L.build_store e' (lookup s) builder); e'*)
+		let e' = expr builder e in
+                ignore (L.build_store e' (lookup s) builder); e'
       | A.Float_Lit f -> L.const_float f_t f
       | A.Char_Lit c -> L.const_int i8_t (Char.code c)
       | A.Null -> L.const_null i32_t
@@ -293,29 +295,6 @@ let translate (classes) =
         | _ -> L.build_ret (expr builder e) builder); builder
        
  	
-	| A.Local(d, s, e) ->
-	    let t = match d with
-	 	Datatype(Objecttype(name)) -> find_struct name
-	      | _ -> get_type d in
-	    let alloca = L.build_alloca t s builder in
-	    Hashtbl.add named_values s alloca;
-	    let lhs = Id(s) in
-	    match e with
-		Noexpr -> alloca
-	      | _ -> A.Assign (s, e) = 
-	  let lhs = match s with 
-	    A.Id(s) -> try Hashtbl.find named_values id
-		     with Not_found -> try Hashtbl.find named_values id with Not_found -> raise(Failure("Undefined Id"))
-	  | ObjAccess(e1, e2) -> expr e1 e2 builder
-	  | _ -> raise(Failure("Must be assignable")) in
-	  let rhs = match e with
-	    ObjAccess(e1, e2) -> expr e1 e2 builder
-          | _ -> expr e2 builder in
-	  ignore(L.build_store rhs lhs builder);
-	  rhs
-
-
-  
         | A.If (pred, then_stmt, else_stmt) ->
 	    let bool_val = expr builder pred in
 	    let merge_bb = L.append_block context "merge" the_function in
@@ -338,8 +317,28 @@ let translate (classes) =
 	   ignore (L.build_cond_br bool_val body_bb merge_bb pred_builder);
 	   L.builder_at_end context merge_bb
 
-in
-         
+
+       	| A.Local(d, s, e) ->
+	    let t = match d with
+	 	A.Objecttype(name) -> find_exn name
+	      | _ -> ltype_of_typ d in
+	    let alloca = L.build_alloca t s builder in
+	    Hashtbl.add named_values s alloca;
+	    let lhs = A.Id(s) in
+	    match e with
+		Noexpr -> alloca
+	      | _ -> A.Assign (s, e) = 
+	  let lhs = match s with 
+	    A.Id(s) -> try Hashtbl.find named_values id
+		     with Not_found -> try Hashtbl.find named_values id with Not_found -> raise(Failure("Undefined Id"))
+	  | ObjAccess(e1, e2) -> expr e1 e2 builder
+	  | _ -> raise(Failure("Must be assignable")) in
+	  let rhs = match e with
+	    ObjAccess(e1, e2) -> expr e1 e2 builder
+          | _ -> expr e2 builder in
+	  ignore(L.build_store rhs lhs builder);
+	  rhs
+in 
 
       (* Code for each statement in the function *)
       let builder = stmt builder (A.Block fdecl.A.body) in
