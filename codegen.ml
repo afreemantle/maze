@@ -5,7 +5,6 @@ module A = Ast
 
 module StringMap = Map.Make(String)
 
-
 let translate (classes) =
 
     let grab_dbody someClass =
@@ -32,6 +31,16 @@ let translate (classes) =
     and str_t = L.pointer_type (L.i8_type context) in
     (* add our other types here *)
 
+    let struct_field_indexes: (string, int) Hashtbl.t = Hashtbl.create 50 
+    and struct_types:(string, L.lltype) Hashtbl.t = Hashtbl.create 10 in
+
+
+    let find_exn name = 
+	if name = "String" then (L.i8_type context) else
+	try Hashtbl.find struct_types name
+	with Not_found -> raise(Failure("Invalid Type")) in
+
+
     let typ_of_datatype = function
         A.Arraytype(p, i) -> p
       | A.Datatype(p) -> p
@@ -45,9 +54,10 @@ let translate (classes) =
       | A.String -> str_t
       | A.Float -> f_t
       | A.Char -> i8_t
+      | A.Objecttype(n) -> L.pointer_type(find_exn n)
       | A.Null -> i32_t in
 
-    let ltype_of_formal = function
+  let ltype_of_formal = function
         A.Formal(t, n) -> ltype_of_typ(typ_of_datatype t)
     in
 
@@ -198,16 +208,58 @@ let translate (classes) =
 	  let f = func_lookup id in
 	  let params = List.map (expr builder) e1 in
 	  let obj = L.build_call f (Array.of_list params) "tmp" builder in
-	  obj
+	  obj  
 
-
+      | A.ObjAccess(e1, e2) ->
+	  let type_name = match e1 with
+	      Id(s) -> L.string_of_lltype(L.type_of (lookup s))
+	  (*  | ObjAccess(e, _) -> L.type_of e*) in
+          let struct_llval = match e1 with
+	      A.Id(s) -> L.build_load (lookup s) s builder
+           (* | A.ObjAccess(le, re) -> expr le re builder*) in
+          let field_name = match e2 with
+	      A.Id(s) -> s in
+	  let search_term = type_name ^ "." ^ field_name in
+	  let field_index = Hashtbl.find struct_field_indexes search_term in
+	  let llvalue = L.build_struct_gep struct_llval field_index field_name builder in
+	  let llvalue = if true
+	      then L.build_load llvalue field_name builder 
+	      else llvalue in
+	  llvalue
+ 
       | A.Unop(op, e) ->
 	  let e' = expr builder e in
 	  (match op with
 	    A.Neg     -> L.build_neg
           | A.Not     -> L.build_not) e' "tmp" builder
-      | A.Assign (s, e) -> let e' = expr builder e in
-                ignore (L.build_store e' (lookup s) builder); e'
+      
+      | A.Assign (s, e) -> 
+          (*let rhsType = typ_of_datatype e in*)
+	  let lhs  = match s with
+	      A.Id(id) -> L.build_load (lookup s) s builder
+	    | A.ObjAccess(e1, e2) -> expr e1 e2 builder
+	    | _ -> raise(Failure("Must be assignable")) in
+
+	  let rhs = match e with
+	    | A.Id(id) -> expr id builder
+	    | A.ObjAccess(e1, e2) -> expr e1 e2 builder in
+
+	  ignore(L.build_store rhs lhs builder);
+	  rhs
+
+	(*  let lhs = match s with 
+	    A.Id(id) -> (try Hashtbl.find named_parameters id
+		     with Not_found -> try Hashtbl.find named_values id with Not_found -> raise(Failure("Undefined Id")))
+	  | ObjAccess(e1, e2) -> expr e1 e2 builder
+	  | _ -> raise(Failure("Must be assignable")) in
+	  
+	  let rhs = match e with
+	    ObjAccess(e1, e2) -> expr e1 e2 builder
+          | _ -> expr e2 builder in
+	  ignore(L.build_store rhs lhs builder);
+	  rhs*)
+		(*let e' = expr builder e in
+                ignore (L.build_store e' (lookup s) builder); e'*)
       | A.Float_Lit f -> L.const_float f_t f
       | A.Char_Lit c -> L.const_int i8_t (Char.code c)
       | A.Null -> L.const_null i32_t
@@ -239,7 +291,31 @@ let translate (classes) =
         | A.Return e -> ignore (match (typ_of_datatype fdecl.A.returnType) with
           A.Void -> L.build_ret_void builder
         | _ -> L.build_ret (expr builder e) builder); builder
-         
+       
+ 	
+	| A.Local(d, s, e) ->
+	    let t = match d with
+	 	Datatype(Objecttype(name)) -> find_struct name
+	      | _ -> get_type d in
+	    let alloca = L.build_alloca t s builder in
+	    Hashtbl.add named_values s alloca;
+	    let lhs = Id(s) in
+	    match e with
+		Noexpr -> alloca
+	      | _ -> A.Assign (s, e) = 
+	  let lhs = match s with 
+	    A.Id(s) -> try Hashtbl.find named_values id
+		     with Not_found -> try Hashtbl.find named_values id with Not_found -> raise(Failure("Undefined Id"))
+	  | ObjAccess(e1, e2) -> expr e1 e2 builder
+	  | _ -> raise(Failure("Must be assignable")) in
+	  let rhs = match e with
+	    ObjAccess(e1, e2) -> expr e1 e2 builder
+          | _ -> expr e2 builder in
+	  ignore(L.build_store rhs lhs builder);
+	  rhs
+
+
+  
         | A.If (pred, then_stmt, else_stmt) ->
 	    let bool_val = expr builder pred in
 	    let merge_bb = L.append_block context "merge" the_function in
@@ -271,10 +347,10 @@ in
       (*MicroC behavior here is to have program return void 
        * if control falls off the end of the program *)
       add_terminal builder (match (typ_of_datatype fdecl.A.returnType) with
+       
           A.Void -> L.build_ret_void 
         | t -> L.build_ret (L.const_int (ltype_of_typ t) 0))
-      in
 
-
+in
       List.iter build_function_body functions;
       the_module

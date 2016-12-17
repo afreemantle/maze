@@ -1,10 +1,12 @@
 class shape {
 
+
 }
 
 
 class test {
     void main(){
+        class shape a;
 
         print("ok");
 
