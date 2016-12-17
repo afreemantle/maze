@@ -150,7 +150,7 @@ let translate (classes) =
       | A.Float_Lit f -> float_format_str 
       | A.Binop (e1, op, e2) -> int_format_str 
       | A.Bool_Lit b -> int_format_str 
-      | A.Id s -> type_of_val((L.string_of_lltype(L.type_of (lookup s)))) 
+      | A.Id s -> type_of_val(L.string_of_lltype(L.type_of (lookup s))) 
     in 
     
     (* Generate code for an expression *)
@@ -264,7 +264,6 @@ let translate (classes) =
 	   L.builder_at_end context merge_bb
 
 in
-         
 
       (* Code for each statement in the function *)
       let builder = stmt builder (A.Block fdecl.A.body) in
