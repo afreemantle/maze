@@ -98,10 +98,21 @@ let check classes =
     | Field(t, n) -> StringMap.add n t m
   in
 
+  let map_add_formal m v =
+      match v with
+    | Formal(t, n) -> StringMap.add n t m
+  in
+
   let rec grab_func_locals = function
       [] -> []
     | [x] -> let y = x.locals in y
     | head :: tail -> let r = head.locals in r @ grab_func_locals tail
+  in
+
+  let rec grab_func_formals = function
+      [] -> []
+    | [x] -> let y = x.formals in y
+    | head :: tail -> let r = head.formals in r @ grab_func_formals tail
   in
 
   let check_methods_class someClass =
@@ -113,10 +124,11 @@ let check classes =
         report_duplicate (fun n -> "duplicate function " ^ n)
                 (List.map (fun f -> string_of_fname f.fname) methods);
 
-        let symbols_classVars = List.fold_left map_add_vdecl StringMap.empty someClass.dbody.vdecls
+        let symbols_classVars = List.fold_left map_add_vdecl StringMap.empty (someClass.dbody.vdecls @ (grab_func_locals methods))
         in
 
-        (*let symbols = List.fold_left map_add_vdecl symbols_classVars *)
+        let symbols = List.fold_left map_add_formal symbols_classVars (grab_func_formals methods)
+        in
 
         let check_function func = 
             List.iter (check_not_voidf (fun n -> "illegal void formal " ^ n ^ " in " ^ string_of_fname func.fname)) func.formals;
