@@ -1,0 +1,5 @@
+class test {
+    void main (int x, int x) {
+        print("Hello World");
+    }
+}
