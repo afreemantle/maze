@@ -29,6 +29,7 @@ let check classes =
   (* Raise an exception if a given binding is to a void type *)
   let check_not_void exceptf = function
       Field(t, n) -> if typ_of_datatype t == Void then raise (Failure (exceptf n)) else ()
+      (*add support for formals*)
   in
 
   (* Grabs second element of Field (vdecl) *)
@@ -67,13 +68,6 @@ let check classes =
       if List.mem "print" (List.map (fun f -> string_of_fname f.fname) funcList)
       then raise (Failure ("function print is already defined")) else ();
   in
-      
-  (*let check_methods_class someClass = *)
-  (*let methods = someClass.dbody.methods in
-      check_for_print methods;
-      report_duplicate (fun n -> "duplicate function " ^ n)
-        (List.map (fun f -> string_of_fname f.fname) methods);
-  in *)
   
   let m = StringMap.empty in
 
@@ -98,7 +92,13 @@ let check classes =
         (*function_decl "tfunc" function_decls; *)
         check_for_print methods;
         report_duplicate (fun n -> "duplicate function " ^ n)
-                (List.map (fun f -> string_of_fname f.fname) methods)(*in*)
+                (List.map (fun f -> string_of_fname f.fname) methods) in
+
+
+        let check_function func = 
+            List.iter (check_not_void (fun n -> "illegal void formal " ^ n ^ " in " ^ string_of_fname func.fname)) func.formals;
+
+        List.iter check_function methods
   in
 
 
