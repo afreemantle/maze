@@ -198,7 +198,6 @@ expr:
  | LPAREN expr RPAREN  { $2 }
  | ID LPAREN actuals_opt RPAREN { Call($1, $3) }
  | NEW ID LPAREN actuals_opt RPAREN { ObjCreate($2, $4) } 
- | LPAREN expr RPAREN { $2 }
 
 
 
