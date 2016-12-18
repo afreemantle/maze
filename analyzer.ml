@@ -75,13 +75,14 @@ let check classes =
         (List.map (fun f -> string_of_fname f.fname) methods);
   in *)
   
+  let m = StringMap.empty in
 
   let built_in_decls = StringMap.add "print"
-     { returnType = Datatype(Void); fname = FName("print"); formals = [Formal(Datatype(String), "")]; locals = []; body = [] }
+     { returnType = Datatype(Void); fname = FName("print"); formals = [Formal(Datatype(String), "")]; locals = []; body = [] } m
   in
 
   let build_f_decls funcList = 
-      List.fold_left (fun m f -> StringMap.add (string_of_fname f.fname) f) built_in_decls funcList
+      List.fold_left (fun m f -> StringMap.add (string_of_fname f.fname) f m) built_in_decls funcList
   in
 
   let function_decl s someMap = try StringMap.find s someMap
