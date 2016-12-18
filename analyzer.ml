@@ -93,6 +93,17 @@ let check classes =
 
   let print_fname fname f = print_string(fname ^ " . \n") in
 
+  let map_add_vdecl m v =
+      match v with
+    | Field(t, n) -> StringMap.add n t m
+  in
+
+  let rec grab_func_locals = function
+      [] -> []
+    | [x] -> let y = x.locals in y
+    | head :: tail -> let r = head.locals in r @ grab_func_locals tail
+  in
+
   let check_methods_class someClass =
       let methods = someClass.dbody.methods in
         let function_decls = build_f_decls methods in
@@ -102,6 +113,10 @@ let check classes =
         report_duplicate (fun n -> "duplicate function " ^ n)
                 (List.map (fun f -> string_of_fname f.fname) methods);
 
+        let symbols_classVars = List.fold_left map_add_vdecl StringMap.empty someClass.dbody.vdecls
+        in
+
+        (*let symbols = List.fold_left map_add_vdecl symbols_classVars *)
 
         let check_function func = 
             List.iter (check_not_voidf (fun n -> "illegal void formal " ^ n ^ " in " ^ string_of_fname func.fname)) func.formals;
