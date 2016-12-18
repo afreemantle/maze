@@ -103,7 +103,7 @@ fname:
     ID { $1 }
   
 fdecl:
-     typ fname LPAREN formals_opt RPAREN LBRACE vdecl_list stmt_list RBRACE
+     datatype fname LPAREN formals_opt RPAREN LBRACE vdecl_list stmt_list RBRACE
      {
          {
              fname = FName($2);
@@ -121,7 +121,7 @@ fdecl:
     /* nothing */  { [] }
  | vdecl_list vdecl { $2 :: $1 }
 
-vdecl: typ ID SEMI { Field($1, $2) }
+vdecl: datatype ID SEMI { Field($1, $2) }
      
           
 /* Formals */
@@ -131,8 +131,8 @@ formals_opt:
  | formal_list  {List.rev $1 }
 
 formal_list:
-   typ ID   { [Formal($1, $2)] }
- | formal_list COMMA typ ID { Formal($3, $4) :: $1 }
+   datatype ID   { [Formal($1, $2)] }
+ | formal_list COMMA datatype ID { Formal($3, $4) :: $1 }
 
 
 actuals_opt:
@@ -150,10 +150,16 @@ typ:
    INT   { Datatype(Int) }
  | FLOAT { Datatype(Float) }
  | CHAR  { Datatype(Char) }
- | STRING {Datatype(String)}
+ | STRING { Datatype(String)}
  | BOOL  { Datatype(Bool) }
  | VOID  { Datatype(Void) }
 
+name:
+    CLASS ID { Datatype(Objecttype ($2))}      
+
+datatype:
+      typ { $1 }
+    | name { $1 }          
 
 /* Expressions */
 
@@ -169,8 +175,7 @@ stmt:
  | IF LPAREN expr RPAREN stmt %prec NOELSE   { If($3, $5, Block([])) }
  | IF LPAREN expr RPAREN stmt ELSE stmt   { If($3, $5, $7) }
  | WHILE LPAREN expr RPAREN stmt  { While($3, $5) }
-/* | typ ID SEMI { Vdecl($1, $2) } */
-
+ | datatype ID SEMI {Local($1, $2)}
 
 expr:
    literals     { $1 }

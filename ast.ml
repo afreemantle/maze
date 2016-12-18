@@ -40,8 +40,8 @@ type stmt = Block of stmt list
 	    | While of expr * stmt
 	    | Expr of expr
 	    | Return of expr
-            
 (* type vdecl = Field of datatype * string *)
+            | Local of datatype * string
 
 type func_decl = {
 	    fname   :  fname;

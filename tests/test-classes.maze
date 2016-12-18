@@ -1,13 +1,11 @@
-class shape {
-
+class test2 {
 }
-
 
 class test {
     void main(){
-
-        print("ok");
-
+        test2 myTest;
     }
 
 }
+
+
