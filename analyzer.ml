@@ -29,8 +29,12 @@ let check classes =
   (* Raise an exception if a given binding is to a void type *)
   let check_not_void exceptf = function
       Field(t, n) -> if typ_of_datatype t == Void then raise (Failure (exceptf n)) else ()
-      (*add support for formals*)
   in
+
+  let check_not_voidf exceptf = function
+      Formal(t, n) -> if typ_of_datatype t == Void then raise (Failure (exceptf n)) else ()
+  in
+
 
   (* Grabs second element of Field (vdecl) *)
   let get_second = function
@@ -92,11 +96,11 @@ let check classes =
         (*function_decl "tfunc" function_decls; *)
         check_for_print methods;
         report_duplicate (fun n -> "duplicate function " ^ n)
-                (List.map (fun f -> string_of_fname f.fname) methods) in
+                (List.map (fun f -> string_of_fname f.fname) methods);
 
 
         let check_function func = 
-            List.iter (check_not_void (fun n -> "illegal void formal " ^ n ^ " in " ^ string_of_fname func.fname)) func.formals;
+            List.iter (check_not_voidf (fun n -> "illegal void formal " ^ n ^ " in " ^ string_of_fname func.fname)) func.formals in
 
         List.iter check_function methods
   in
