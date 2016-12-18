@@ -89,12 +89,12 @@ let check classes =
        with Not_found -> raise (Failure ("unrecognized function " ^ s))
   in
 
-  let print_fname fname = print_string(fname ^ " . \n") in
+  let print_fname fname f = print_string(fname ^ " . \n") in
 
   let check_methods_class someClass =
       let methods = someClass.dbody.methods in
         let function_decls = build_f_decls methods in
-        (*StringMap.iter print_fname function_decls;*)
+        (*StringMap.iter print_fname function_decls; *)
         (*function_decl "tfunc" function_decls; *)
         check_for_print methods;
         report_duplicate (fun n -> "duplicate function " ^ n)
