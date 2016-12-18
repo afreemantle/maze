@@ -39,6 +39,10 @@ let check classes =
   (* Grabs second element of Field (vdecl) *)
   let get_second = function
       Field(t, n) -> n
+  in
+
+  let get_second_formal = function
+      Formal(t, n) -> n
   in 
 
   (* Checks that local method variables are neither null nor duplicates *)
@@ -100,7 +104,8 @@ let check classes =
 
 
         let check_function func = 
-            List.iter (check_not_voidf (fun n -> "illegal void formal " ^ n ^ " in " ^ string_of_fname func.fname)) func.formals in
+            List.iter (check_not_voidf (fun n -> "illegal void formal " ^ n ^ " in " ^ string_of_fname func.fname)) func.formals;
+            report_duplicate (fun n -> "duplicate formal " ^ n ^ " in " ^ string_of_fname func.fname) (List.map get_second_formal func.formals) in
 
         List.iter check_function methods
   in
