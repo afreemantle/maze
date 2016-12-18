@@ -1,5 +1,6 @@
 
 open Ast
+open Codegen
 
 module StringMap = Map.Make(String)
 
@@ -91,16 +92,16 @@ let check classes =
        with Not_found -> raise (Failure ("unrecognized function " ^ s))
   in
 
-  let print_fname fname f = print_string(fname ^ " . \n") in
+  let print_fname fname f = print_string(fname ^ " " ^ string_of_typ f^"\n") in
 
   let map_add_vdecl m v =
       match v with
-    | Field(t, n) -> StringMap.add n t m
+    | Field(t, n) -> StringMap.add n (typ_of_datatype t) m
   in
 
   let map_add_formal m v =
       match v with
-    | Formal(t, n) -> StringMap.add n t m
+    | Formal(t, n) -> StringMap.add n (typ_of_datatype t) m
   in
 
   let rec grab_func_locals = function
@@ -131,16 +132,72 @@ let check classes =
         let symbols = List.fold_left map_add_formal symbols_classVars (grab_func_formals methods)
         in
 
+        (*StringMap.iter print_fname symbols;*)
+
         let type_of_identifier s =
             try StringMap.find s symbols
             with Not_found -> raise (Failure ("undeclared identifier " ^ s))
-        in    
+        in
 
-        let check_function func = 
+        (*type_of_identifier "x";*)
+
+        let check_func func =
+
+            let rec expr = function
+                (*match s with  *)
+                Id s -> type_of_identifier s
+              | Int_Lit _ -> Int
+              | Bool_Lit _ -> Bool
+              | Float_Lit _ -> Float
+              | Char_Lit _ -> Char
+              | String_Lit _ -> String
+              | Noexpr -> Void
+              | Null -> Null
+              | Unop(op, e) -> Bool     (* NEED TO FIX UNOP LATER *)
+              | Binop(e1, op, e2) as e -> let t1 = expr e1 and t2 = expr e2 
+                in (match op with
+                  Add | Sub | Mult | Div when t1 = Int && t2 = Int -> Int
+                | Equal | Neq when t1 = t2 -> Bool
+                | Less | Leq | Greater | Geq when t1 = Int && t2 = Int -> Bool
+                | And | Or when t1 = Bool && t2 = Bool -> Bool
+                | _ -> raise (Failure ("illegal binary operator " ^
+                      string_of_typ t1 ^ " " ^ string_of_op op ^ " " ^
+                      string_of_typ t2 ^ " in " ^ string_of_expr e))
+                )
+              | Assign(var, e) -> Void
+              | ObjCreate(oname, actuals) -> Void
+              | ObjAccess(e1, e2) -> Void
+              | Call(fname, actuals) -> Void
+              (*| _ -> raise (Failure ("_")) *) 
+            in
+
+            let check_bool_expr e = if expr e != Bool
+              then raise (Failure ("expected Boolean expression in " ^ string_of_expr e)) else () in
+
+            let rec stmt = function
+                Block sl -> let rec check_block = function
+                   [Return _ as s] -> stmt s
+                 | Return _ :: _ -> raise (Failure "nothing may follow a return")
+                 | Block sl :: ss -> check_block (sl @ ss)
+                 | s :: ss -> stmt s ; check_block ss
+                 | [] -> ()
+                in check_block sl 
+              | Expr e -> ignore (expr e)
+              | Return e -> let t = expr e in if t = (typ_of_datatype func.returnType) then () else
+                  raise (Failure ("return gives " ^ string_of_typ t ^
+                        " expected " ^ (string_of_datatype func.returnType)
+                        ^ " in " ^ string_of_expr e))
+              | If(p, b1, b2) -> check_bool_expr p; stmt b1; stmt b2
+              | While(p, s) -> check_bool_expr p; stmt s
+             in
+
+             stmt (Block func.body);
+        
+
             List.iter (check_not_voidf (fun n -> "illegal void formal " ^ n ^ " in " ^ string_of_fname func.fname)) func.formals;
             report_duplicate (fun n -> "duplicate formal " ^ n ^ " in " ^ string_of_fname func.fname) (List.map get_second_formal func.formals) in
 
-        List.iter check_function methods
+        List.iter check_func methods
   in
 
 
