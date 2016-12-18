@@ -1,0 +1,8 @@
+class obj {}
+
+class test {
+    void main() {
+        obj myObj;
+        print("success");
+    }
+}

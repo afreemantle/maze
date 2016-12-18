@@ -167,8 +167,7 @@ stmt_list:
   | stmt_list stmt  { $2 :: $1 }
 
 stmt:
-   expr SEMI     { Expr $1 }
- | RETURN SEMI   { Return Noexpr }
+  RETURN SEMI   { Return Noexpr }
  | RETURN expr SEMI  { Return $2 }
  | LBRACE stmt_list RBRACE   { Block(List.rev $2) }
  | IF LPAREN expr RPAREN stmt %prec NOELSE   { If($3, $5, Block([])) }
@@ -176,8 +175,9 @@ stmt:
  | WHILE LPAREN expr RPAREN stmt  { While($3, $5) }
  | datatype ID SEMI { Local($1, $2, Noexpr)  }
  | datatype ID ASSIGN expr SEMI {Local($1, $2, $4)}
+ | expr SEMI     { Expr $1 }
 
-expr:
+ expr:
    literals     { $1 }
  | expr PLUS expr  { Binop($1, Add, $3) }
  | expr MINUS expr { Binop($1, Sub, $3) }
