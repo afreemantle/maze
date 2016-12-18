@@ -3,7 +3,7 @@ class test2 {
 
 class test {
     void main(){
-        test2 myTest;
+        test2 myTest = new test2();
     }
 
 }

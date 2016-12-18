@@ -134,7 +134,6 @@ formal_list:
    datatype ID   { [Formal($1, $2)] }
  | formal_list COMMA datatype ID { Formal($3, $4) :: $1 }
 
-
 actuals_opt:
   /* nothing */  { [] }
  | actuals_list { List.rev $1}
@@ -175,7 +174,8 @@ stmt:
  | IF LPAREN expr RPAREN stmt %prec NOELSE   { If($3, $5, Block([])) }
  | IF LPAREN expr RPAREN stmt ELSE stmt   { If($3, $5, $7) }
  | WHILE LPAREN expr RPAREN stmt  { While($3, $5) }
- | datatype ID SEMI {Local($1, $2)}
+ | datatype ID SEMI { Local($1, $2, Noexpr)  }
+ | datatype ID ASSIGN expr SEMI {Local($1, $2, $4)}
 
 expr:
    literals     { $1 }
@@ -197,8 +197,9 @@ expr:
  | ID ASSIGN expr  { Assign($1, $3) }
  | LPAREN expr RPAREN  { $2 }
  | ID LPAREN actuals_opt RPAREN { Call($1, $3) }
- | NEW ID LPAREN actuals_opt RPAREN { ObjCreate($2, $4) }
- 
+ | NEW ID LPAREN actuals_opt RPAREN { ObjCreate($2, $4) } 
+ | LPAREN expr RPAREN { $2 }
+
 
 
 literals: 
