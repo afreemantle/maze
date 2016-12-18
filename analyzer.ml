@@ -127,8 +127,14 @@ let check classes =
         let symbols_classVars = List.fold_left map_add_vdecl StringMap.empty (someClass.dbody.vdecls @ (grab_func_locals methods))
         in
 
+        (* Map of class vars, locals, and formals for fcns in the class *)
         let symbols = List.fold_left map_add_formal symbols_classVars (grab_func_formals methods)
         in
+
+        let type_of_identifier s =
+            try StringMap.find s symbols
+            with Not_found -> raise (Failure ("undeclared identifier " ^ s))
+        in    
 
         let check_function func = 
             List.iter (check_not_voidf (fun n -> "illegal void formal " ^ n ^ " in " ^ string_of_fname func.fname)) func.formals;
