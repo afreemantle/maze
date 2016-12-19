@@ -193,6 +193,8 @@ let check classes =
               | ObjCreate(oname, actuals) -> Void
               | ObjAccess(e1, e2) -> Void
               | Call(fname, actuals) -> Int
+
+              (* WORK ON CALL WHEN I GET BACK *)
               (*| _ -> raise (Failure ("_")) *) 
             in
 
