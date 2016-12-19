@@ -193,8 +193,8 @@ let check classes =
                 check_assign lt rt (Failure ("illegal assignment " ^
                                 string_of_typ lt ^ " = " ^ string_of_typ rt
                                 ^ " in " ^ string_of_expr ex))
-              | ObjCreate(oname, actuals) -> Void
-              | ObjAccess(e1, e2) -> Void
+         (*   | ObjCreate(oname, actuals) -> Void
+              | ObjAccess(e1, e2) -> Void  *)
               | Call(fname, actuals) as call -> 
                       if (fname = "print") then Void else
                  let fd = function_decl fname function_decls in

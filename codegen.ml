@@ -126,13 +126,6 @@ let translate (classes) =
             (List.map typeKey_of_formal fdecl.A.formals) (Array.to_list (L.params the_function)) in
         List.fold_left add_local formals (List.map typeKey_of_local fdecl.A.locals) in
     
-    (* in MicroC, this lookup funtion finds the value for a variable *)
-    let func_lookup fname =
-	match (L.lookup_function fname the_module) with
-	   None -> raise(Failure("LLVM Function Not Found"))
- 	 | Some f -> f
-    in
-
     let lookup n = StringMap.find n local_vars in
     
     let type_of_val = function 
@@ -141,6 +134,7 @@ let translate (classes) =
       | "i8*" -> char_format_str (*char*)
       | "i1*" -> int_format_str (*bool*)
       | "double*" -> float_format_str (*float*)
+      | _ -> str_format_str
     in 
 
     let check_print_input = function
@@ -150,7 +144,12 @@ let translate (classes) =
       | A.Float_Lit f -> float_format_str 
       | A.Binop (e1, op, e2) -> int_format_str 
       | A.Bool_Lit b -> int_format_str 
-      | A.Id s -> type_of_val(L.string_of_lltype(L.type_of (lookup s))) 
+      | A.Id s -> type_of_val(L.string_of_lltype(L.type_of (lookup s)))
+      | A.Assign (s, e) -> int_format_str
+      | A.Noexpr -> int_format_str
+      | A.Unop (op, e) -> int_format_str
+      | A.Call (s, actuals) -> int_format_str
+      | A.Null -> int_format_str
     in 
     
     (* Generate code for an expression *)
@@ -195,11 +194,11 @@ let translate (classes) =
           if(L.type_of e1' = f_t || L.type_of e2' = f_t) then float_ops e1' e2' "tmp" builder
 	  else int_ops e1' e2' "tmp" builder
 
-      | A.ObjCreate(id, e1) ->
+   (* | A.ObjCreate(id, e1) ->
 	  let f = func_lookup id in
 	  let params = List.map (expr builder) e1 in
 	  let obj = L.build_call f (Array.of_list params) "tmp" builder in
-	  obj
+	  obj *)
 
 
       | A.Unop(op, e) ->
