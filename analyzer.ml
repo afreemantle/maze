@@ -185,11 +185,14 @@ let check classes =
                       string_of_typ t1 ^ " " ^ string_of_op op ^ " " ^
                       string_of_typ t2 ^ " in " ^ string_of_expr e))
                 )
-              | Assign(var, e) as ex -> (*let lt = type_of_identifer var
-                                        and rt = expr e in*) Void
+              | Assign(var, e) as ex -> let lt = type_of_identifier var
+                                        and rt = expr e in
+                check_assign lt rt (Failure ("illegal assignment " ^
+                                string_of_typ lt ^ " = " ^ string_of_typ rt
+                                ^ " in " ^ string_of_expr ex))
               | ObjCreate(oname, actuals) -> Void
               | ObjAccess(e1, e2) -> Void
-              | Call(fname, actuals) -> Void
+              | Call(fname, actuals) -> Int
               (*| _ -> raise (Failure ("_")) *) 
             in
 
