@@ -132,7 +132,7 @@ let check classes =
         let symbols = List.fold_left map_add_formal symbols_classVars (grab_func_formals methods)
         in
 
-        (*StringMap.iter print_fname symbols; *)
+        (*StringMap.iter print_fname symbols;*)
 
         let type_of_identifier s =
             try StringMap.find s symbols
@@ -160,13 +160,22 @@ let check classes =
                   string_of_expr ex)))
               | Binop(e1, op, e2) as e -> let t1 = expr e1 and t2 = expr e2 
                 in (match op with
-                  Add | Sub | Mult | Div -> if (t1 = t2)
+                  Add | Sub | Mult | Div -> if ((t1 = Int || t1 = Float)
+                                        && (t1 = t2))
                         then (t1)
                         else raise (Failure ("operator " ^
                                     string_of_op op ^ " requires " ^
                                     "two ints or two floats")) 
-                | Equal | Neq when t1 = t2 -> Bool
-                | Less | Leq | Greater | Geq when t1 = Int && t2 = Int -> Bool
+                | Equal | Neq when t1 = t2 -> Bool 
+                         (*add error message, test *)
+                | Less | Leq | Greater | Geq -> 
+                        if ((t1 = Int || t1 = Float) &&
+                            (t1 = t2))
+                        then (Bool)
+                        else raise (Failure ("operator " ^ string_of_op op ^
+                                    " requires int or float operands"))
+
+                        (* ^^ Currently doesn't throw this error, FIX *)
                 | And | Or when t1 = Bool && t2 = Bool -> Bool
                 | _ -> raise (Failure ("illegal binary operator " ^
                       string_of_typ t1 ^ " " ^ string_of_op op ^ " " ^
