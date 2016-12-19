@@ -40,7 +40,6 @@ let check classes =
       Formal(t, n) -> if typ_of_datatype t == Void then raise (Failure (exceptf n)) else ()
   in
 
-
   (* Grabs second element of Field (vdecl) *)
   let get_second = function
       Field(t, n) -> n
@@ -241,6 +240,32 @@ let check classes =
 
         List.iter check_func methods
   in
+
+    let rec grab_class_fcns = function
+        [] -> []
+      | [x] -> let y = x.dbody.methods in y
+      | head :: tail -> let r = head.dbody.methods in r @ grab_class_fcns tail
+    in
+
+    let string_of_method f = string_of_fname f.fname in
+
+    let check_for_main fl =
+      let rec helper i flist =
+        match flist with
+      | [] -> raise (Failure ("Must have exactly 1 'main' method"))
+      | [x] -> if ( i = 1 && (string_of_method x) != "main") then ()
+               else raise (Failure ("Must have exactly 1 'main' method"))
+      | h :: t -> if (i = 1 && (string_of_method h) = "main")
+                  then raise (Failure ("Must have exactly 1 'main' method"))
+                  else if ((string_of_method h) = "main")
+                  then helper (i+1) t
+                  else helper i t
+      in helper 0 fl
+    in
+
+    let all_methods = grab_class_fcns classes in
+    check_for_main all_methods;
+    
 
 
 
