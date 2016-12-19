@@ -1,4 +1,6 @@
 class test {
+
+    void main (){}
     void test () {
         int y;
     }
