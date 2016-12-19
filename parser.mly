@@ -5,7 +5,7 @@
 %token EQ NEQ LT LEQ GT GEQ TRUE FALSE AND OR
 %token RETURN IF ELSE WHILE 
 %token INT BOOL CHAR STRING FLOAT VOID NULL
-%token CLASS CONSTRUCTOR EXTENDS NEW
+%token CLASS CONSTRUCTOR EXTENDS NEW OBJ
 
 %token <int> INT_LITERAL
 %token <char> CHAR_LITERAL
@@ -173,8 +173,8 @@ stmt:
  | IF LPAREN expr RPAREN stmt %prec NOELSE   { If($3, $5, Block([])) }
  | IF LPAREN expr RPAREN stmt ELSE stmt   { If($3, $5, $7) }
  | WHILE LPAREN expr RPAREN stmt  { While($3, $5) }
- | datatype ID SEMI { Local($1, $2, Noexpr)  }
- | datatype ID ASSIGN expr SEMI {Local($1, $2, $4)}
+ | OBJ datatype ID SEMI { Local($1, $2, Noexpr)  }
+ | OBJ datatype ID ASSIGN expr SEMI {Local($1, $2, $4)}
  | expr SEMI     { Expr $1 }
 
  expr:
