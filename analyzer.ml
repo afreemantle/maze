@@ -80,6 +80,7 @@ let check classes =
     | Constructor -> ""
   in
 
+  (* checks to ensure that user doesn't define print *)
   let check_for_print funcList =
       if List.mem "print" (List.map (fun f -> string_of_fname f.fname) funcList)
       then raise (Failure ("function print is already defined")) else ();
@@ -87,19 +88,20 @@ let check classes =
   
   let m = StringMap.empty in
 
+  (* adds print to Map *)
   let built_in_decls = StringMap.add "print"
      { returnType = Datatype(Void); fname = FName("print"); formals = [Formal(Datatype(String), "")]; locals = []; body = [] } m
   in
 
+  (* Adds funclist to Map *)
   let build_f_decls funcList = 
       List.fold_left (fun m f -> StringMap.add (string_of_fname f.fname) f m) built_in_decls funcList
   in
 
+  (* Tries to find function s in a given Map *)
   let function_decl s someMap = try StringMap.find s someMap
        with Not_found -> raise (Failure ("unrecognized function " ^ s))
   in
-
-  let print_fname fname f = print_string(fname ^ " " ^ string_of_typ f^"\n") in
 
   let map_add_vdecl m v =
       match v with
@@ -111,23 +113,24 @@ let check classes =
     | Formal(t, n) -> StringMap.add n (typ_of_datatype t) m
   in
 
+  (* returns a list of all locals in a class *)
   let rec grab_func_locals = function
       [] -> []
     | [x] -> let y = x.locals in y
     | head :: tail -> let r = head.locals in r @ grab_func_locals tail
   in
 
+  (* returns a list of all formals in a class *)
   let rec grab_func_formals = function
       [] -> []
     | [x] -> let y = x.formals in y
     | head :: tail -> let r = head.formals in r @ grab_func_formals tail
   in
 
+  (* verifies each class for correct type use, duplicates, incorrect voids *)
   let check_methods_class someClass =
       let methods = someClass.dbody.methods in
         let function_decls = build_f_decls methods in
-        (*StringMap.iter print_fname function_decls; *)
-        (*function_decl "tfunc" function_decls; *)
         check_for_print methods;
         report_duplicate (fun n -> "duplicate function " ^ n)
                 (List.map (fun f -> string_of_fname f.fname) methods);
@@ -139,13 +142,13 @@ let check classes =
         let symbols = List.fold_left map_add_formal symbols_classVars (grab_func_formals methods)
         in
 
-        (*StringMap.iter print_fname symbols;*)
-
+        (* gets the type of some ID *)
         let type_of_identifier s =
             try StringMap.find s symbols
             with Not_found -> raise (Failure ("undeclared identifier " ^ s))
         in
 
+        (* ensures valid expressions, statements *)
         let check_func func =
             let rec expr = function
                 Id s -> type_of_identifier s
@@ -180,7 +183,6 @@ let check classes =
                         else raise (Failure ("operator " ^ string_of_op op ^
                                     " requires int or float operands"))
 
-                        (* ^^ Currently doesn't throw this error, FIX *)
                 | And | Or when t1 = Bool && t2 = Bool -> Bool
                 | _ -> raise (Failure ("illegal binary operator " ^
                       string_of_typ t1 ^ " " ^ string_of_op op ^ " " ^
@@ -208,7 +210,6 @@ let check classes =
                       ^ " in " ^ string_of_expr e )))) fd.formals actuals;
                     typ_of_datatype fd.returnType
 
-              (*| _ -> raise (Failure ("_")) *) 
             in
 
 
@@ -241,6 +242,7 @@ let check classes =
         List.iter check_func methods
   in
 
+    (* collects all the functions in the program *)
     let rec grab_class_fcns = function
         [] -> []
       | [x] -> let y = x.dbody.methods in y
@@ -249,6 +251,7 @@ let check classes =
 
     let string_of_method f = string_of_fname f.fname in
 
+    (* ensures that there is exactly 1 main method in the program *)
     let check_for_main fl =
       let rec helper i flist =
         match flist with
@@ -264,7 +267,6 @@ let check classes =
     in
 
     let all_methods = grab_class_fcns classes in
-    (*List.iter (fun m -> print_endline (string_of_method m)) all_methods;*)
     check_for_main all_methods;
     
 
