@@ -50,6 +50,10 @@ let check classes =
       Formal(t, n) -> n
   in 
 
+  let get_typ_formal = function
+      Formal(t, n) -> typ_of_datatype t
+  in
+
   (* Checks that local method variables are neither null nor duplicates *)
   let check_locals_lists someMethod =
       List.iter (check_not_void (fun n -> "illegal void variable " ^ n)) someMethod.locals;
@@ -144,9 +148,7 @@ let check classes =
         in
 
         let check_func func =
-
             let rec expr = function
-                (*match s with  *)
                 Id s -> type_of_identifier s
               | Int_Lit _ -> Int
               | Bool_Lit _ -> Bool
@@ -192,11 +194,24 @@ let check classes =
                                 ^ " in " ^ string_of_expr ex))
               | ObjCreate(oname, actuals) -> Void
               | ObjAccess(e1, e2) -> Void
-              | Call(fname, actuals) -> Int
+              | Call(fname, actuals) as call -> 
+                      if (fname = "print") then Void else
+                 let fd = function_decl fname function_decls in
+                 if List.length actuals != List.length fd.formals then
+                     raise (Failure ("expecting " ^ string_of_int
+                       (List.length fd.formals) ^ " arguments in " ^
+                       string_of_expr call))
+                 else List.iter2 (fun f e -> let et = expr e in
+                    ignore (check_assign (get_typ_formal f) et
+                      (Failure ("illegal actual argument found " ^
+                      string_of_typ et ^ " expected " ^
+                      string_of_typ (get_typ_formal f)
+                      ^ " in " ^ string_of_expr e )))) fd.formals actuals;
+                    typ_of_datatype fd.returnType
 
-              (* WORK ON CALL WHEN I GET BACK *)
               (*| _ -> raise (Failure ("_")) *) 
             in
+
 
             let check_bool_expr e = if expr e != Bool
               then raise (Failure ("expected Boolean expression in " ^ string_of_expr e)) else () in
