@@ -32,6 +32,18 @@ let translate (classes) =
     and str_t = L.pointer_type (L.i8_type context) in
     (* add our other types here *)
 
+    let struct_field_indexes: (string, int) Hashtbl.t = Hashtbl.create 50
+    and struct_types: (string, L.lltype) Hashtbl.t = Hashtbl.create 10
+    and named_values: (string, L.llvalue) Hashtbl.t = Hashtbl.create 50
+    and named_parameters: (string, L.llvalue) Hashtbl.t = Hashtbl.create 50 in
+
+    let find_exn name = 
+	if name = "String" then (L.i8_type context) else
+	try Hashtbl.find struct_types name
+	with Not_found -> raise(Failure("Invalid Type")) in
+
+
+
     let typ_of_datatype = function
         A.Arraytype(p, i) -> p
       | A.Datatype(p) -> p
@@ -44,7 +56,8 @@ let translate (classes) =
       | A.Void -> void_t
       | A.String -> str_t
       | A.Float -> f_t
-      | A.Char -> i8_t
+      | A.Char -> i8_t 
+      | A.Objecttype(n) -> L.pointer_type(find_exn n)
       | A.Null -> i32_t in
 
     let ltype_of_formal = function
@@ -202,6 +215,22 @@ let translate (classes) =
 	  obj
 
 
+      | A.ObjAccess(e1, e2) ->
+	 let type_name = match e1 with
+	   A.Id(s) -> L.string_of_lltype (L.type_of (lookup s)) in
+	 let struct_llval = match e1 with
+	   A.Id(s) -> L.build_load (lookup s) s builder in
+	 let field_name = match e2 with
+	   A.Id(s) -> s in
+	 let search_term = type_name ^ "." ^ field_name in
+	 let field_index = Hashtbl.find struct_field_indexes search_term in
+	 let llvalue = L.build_struct_gep struct_llval field_index field_name builder in
+	 let llvalue = if true
+		then L.build_load llvalue field_name builder
+		else llvalue in
+	 llvalue
+
+
       | A.Unop(op, e) ->
 	  let e' = expr builder e in
 	  (match op with
@@ -263,7 +292,29 @@ let translate (classes) =
 	   ignore (L.build_cond_br bool_val body_bb merge_bb pred_builder);
 	   L.builder_at_end context merge_bb
 
-in
+
+	| A.Local(d, s, e) ->
+	   let t =  match d with
+	      A.Datatype(A.Objecttype(name)) -> find_exn name
+	    | _ -> ltype_of_typ (typ_of_datatype d) in
+	   let alloca = L.build_alloca t s builder in
+           (*let malloc = L.build_malloc t s builder in *)
+	   Hashtbl.add named_values  s alloca;
+	   let lhs = A.Id(s) in
+	   match e with
+              A.Noexpr -> alloca
+	    (*| _ -> A.Assign(e1, e2) = expr builder e1 e2
+	      lhs = match e1 with
+	      A.Id(id) -> try Hashtbl.find named_values id with Not_found -> raise(Failure("Undefined Id"))
+	    | A.ObjAccess(e1, e2) -> expr e1 e2 builder
+	    | _ -> raise(Failure("Must be assignable")) in
+	   let rhs = match e with
+	      A.ObjAccess(e1, e2) -> expr e1 e2 builder
+	    | _ -> expr e2 builder in
+	   ignore(L.build_store rhs lhs builder);
+	   rhs	     *) 
+
+        in
 
       (* Code for each statement in the function *)
       let builder = stmt builder (A.Block fdecl.A.body) in
@@ -273,7 +324,7 @@ in
       add_terminal builder (match (typ_of_datatype fdecl.A.returnType) with
           A.Void -> L.build_ret_void 
         | t -> L.build_ret (L.const_int (ltype_of_typ t) 0))
-      in
+      
 
 
       List.iter build_function_body functions;

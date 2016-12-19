@@ -5,7 +5,7 @@
 %token EQ NEQ LT LEQ GT GEQ TRUE FALSE AND OR
 %token RETURN IF ELSE WHILE 
 %token INT BOOL CHAR STRING FLOAT VOID NULL
-%token CLASS CONSTRUCTOR EXTENDS NEW
+%token CLASS CONSTRUCTOR EXTENDS NEW OBJ
 
 %token <int> INT_LITERAL
 %token <char> CHAR_LITERAL
@@ -103,7 +103,7 @@ fname:
     ID { $1 }
   
 fdecl:
-     typ fname LPAREN formals_opt RPAREN LBRACE vdecl_list stmt_list RBRACE
+     datatype fname LPAREN formals_opt RPAREN LBRACE vdecl_list stmt_list RBRACE
      {
          {
              fname = FName($2);
@@ -121,7 +121,7 @@ fdecl:
     /* nothing */  { [] }
  | vdecl_list vdecl { $2 :: $1 }
 
-vdecl: typ ID SEMI { Field($1, $2) }
+vdecl: datatype ID SEMI { Field($1, $2) }
      
           
 /* Formals */
@@ -131,9 +131,8 @@ formals_opt:
  | formal_list  {List.rev $1 }
 
 formal_list:
-   typ ID   { [Formal($1, $2)] }
- | formal_list COMMA typ ID { Formal($3, $4) :: $1 }
-
+   datatype ID   { [Formal($1, $2)] }
+ | formal_list COMMA datatype ID { Formal($3, $4) :: $1 }
 
 actuals_opt:
   /* nothing */  { [] }
@@ -150,10 +149,16 @@ typ:
    INT   { Datatype(Int) }
  | FLOAT { Datatype(Float) }
  | CHAR  { Datatype(Char) }
- | STRING {Datatype(String)}
+ | STRING { Datatype(String)}
  | BOOL  { Datatype(Bool) }
  | VOID  { Datatype(Void) }
 
+name:
+    CLASS ID { Datatype(Objecttype ($2))}      
+
+datatype:
+      typ { $1 }
+    | name { $1 }          
 
 /* Expressions */
 
@@ -162,17 +167,17 @@ stmt_list:
   | stmt_list stmt  { $2 :: $1 }
 
 stmt:
-   expr SEMI     { Expr $1 }
- | RETURN SEMI   { Return Noexpr }
+  RETURN SEMI   { Return Noexpr }
  | RETURN expr SEMI  { Return $2 }
  | LBRACE stmt_list RBRACE   { Block(List.rev $2) }
  | IF LPAREN expr RPAREN stmt %prec NOELSE   { If($3, $5, Block([])) }
  | IF LPAREN expr RPAREN stmt ELSE stmt   { If($3, $5, $7) }
  | WHILE LPAREN expr RPAREN stmt  { While($3, $5) }
-/* | typ ID SEMI { Vdecl($1, $2) } */
+ | OBJ datatype ID SEMI { Local($2, $3, Noexpr)  }
+ | OBJ datatype ID ASSIGN expr SEMI {Local($2, $3, $5)}
+ | expr SEMI     { Expr $1 }
 
-
-expr:
+ expr:
    literals     { $1 }
  | expr PLUS expr  { Binop($1, Add, $3) }
  | expr MINUS expr { Binop($1, Sub, $3) }
@@ -192,8 +197,8 @@ expr:
  | ID ASSIGN expr  { Assign($1, $3) }
  | LPAREN expr RPAREN  { $2 }
  | ID LPAREN actuals_opt RPAREN { Call($1, $3) }
- | NEW ID LPAREN actuals_opt RPAREN { ObjCreate($2, $4) }
- 
+ | NEW ID LPAREN actuals_opt RPAREN { ObjCreate($2, $4) } 
+
 
 
 literals: 

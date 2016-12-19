@@ -57,6 +57,7 @@ rule token = parse
 | "extends" {EXTENDS}
 | "class" {CLASS}
 | "new" {NEW}
+| "obj" {OBJ}
 
 (*| ['0' - '9']+ as lxm { LITERAL(int_of_string lxm) } *)
 (*| ['0' - '9']+['.']['0' - '9']+ as lxm { FLOAT_LITERAL(float_of_string lxm) }

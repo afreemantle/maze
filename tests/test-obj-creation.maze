@@ -1,0 +1,9 @@
+class other {}
+
+class test {
+    void main() {
+        obj class other myObj;
+	myObj = new other();
+        print("success");
+    }
+}
