@@ -302,8 +302,8 @@ let translate (classes) =
 	   Hashtbl.add named_values  s alloca;
 	   let lhs = A.Id(s) in
 	   match e with
-	      A.Noexpr -> alloca
-	    | _ -> A.Assign(e1, e2) = expr builder e1 e2
+              A.Noexpr -> alloca
+	    (*| _ -> A.Assign(e1, e2) = expr builder e1 e2
 	      lhs = match e1 with
 	      A.Id(id) -> try Hashtbl.find named_values id with Not_found -> raise(Failure("Undefined Id"))
 	    | A.ObjAccess(e1, e2) -> expr e1 e2 builder
@@ -312,9 +312,9 @@ let translate (classes) =
 	      A.ObjAccess(e1, e2) -> expr e1 e2 builder
 	    | _ -> expr e2 builder in
 	   ignore(L.build_store rhs lhs builder);
-	   rhs	      
+	   rhs	     *) 
 
-in
+        in
 
       (* Code for each statement in the function *)
       let builder = stmt builder (A.Block fdecl.A.body) in
