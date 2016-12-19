@@ -253,17 +253,18 @@ let check classes =
       let rec helper i flist =
         match flist with
       | [] -> raise (Failure ("Must have exactly 1 'main' method"))
-      | [x] -> if ( i = 1 && (string_of_method x) != "main") then ()
-               else raise (Failure ("Must have exactly 1 'main' method"))
-      | h :: t -> if (i = 1 && (string_of_method h) = "main")
-                  then raise (Failure ("Must have exactly 1 'main' method"))
-                  else if ((string_of_method h) = "main")
+      | [x] -> if (i = 0 && ((string_of_method x) = "main")) then ()
+               else if ( i != 1 || (i = 1 && ((string_of_method x) = "main")))
+               then raise (Failure ("Must have exactly 1 'main' method"))
+               else ()
+      | h :: t -> if (string_of_method h) = "main"
                   then helper (i+1) t
                   else helper i t
       in helper 0 fl
     in
 
     let all_methods = grab_class_fcns classes in
+    (*List.iter (fun m -> print_endline (string_of_method m)) all_methods;*)
     check_for_main all_methods;
     
 
@@ -271,4 +272,3 @@ let check classes =
 
   List.iter check_methods_class classes;
 
-  (* check for main at some point *)
