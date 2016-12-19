@@ -296,8 +296,9 @@ let translate (classes) =
 	| A.Local(d, s, e) ->
 	   let t =  match d with
 	      A.Datatype(A.Objecttype(name)) -> find_exn name
-	    | _ -> ltype_of_typ d in
+	    | _ -> ltype_of_typ (typ_of_datatype d) in
 	   let alloca = L.build_alloca t s builder in
+           (*let malloc = L.build_malloc t s builder in *)
 	   Hashtbl.add named_values  s alloca;
 	   let lhs = A.Id(s) in
 	   match e with
