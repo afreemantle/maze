@@ -1,8 +1,9 @@
-class obj {}
+class other {}
 
 class test {
     void main() {
-        obj myObj;
+        obj class other myObj;
+	myObj = new other();
         print("success");
     }
 }
