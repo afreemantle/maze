@@ -23,9 +23,6 @@ type expr = Int_Lit of int
 	    | Float_Lit of float
 	    | Char_Lit of char
 	    | String_Lit of string
-	    | ArrayTyp of expr list
-	    | ArrayCreate of datatype * expr list
-	    | ArrayAccess of expr * expr
 	    | ObjCreate of string * expr list
 	    | ObjAccess of expr * expr
 	    | Noexpr
@@ -134,9 +131,6 @@ and string_of_expr = function
   | Call(f, el) ->
       f ^ "(" ^ String.concat ", " (List.map string_of_expr el) ^ ")"
   | Noexpr -> ""
-  | ArrayTyp(e1) -> "|" ^ string_of_array_typ e1 ^ "|"
-  | ArrayCreate(d, e1) -> "new " ^ string_of_datatype d
-  | ArrayAccess(e, e1) -> string_of_expr e
   | ObjAccess(e1, e2) -> string_of_expr e1 ^ "." ^ string_of_expr e2
   | ObjCreate(s, e1) -> "new" ^ s ^ "(" ^ String.concat ", " (List.map string_of_expr e1) ^ ")"
 
@@ -165,7 +159,7 @@ let string_of_fname = function
 Field(t, id) -> (string_of_datatype t) ^ " " ^ id ^ ";\n" *)
 
 let string_of_formal = function
-Formal(d, s) -> (string_of_datatype d) ^ " " ^ s
+Formal(d, s) -> (string_of_datatype d) ^ " " ^ s 
 
 
 let string_of_func_decl fdecl = (string_of_datatype fdecl.returnType) ^ " " ^ (string_of_fname fdecl.fname) ^ " " ^

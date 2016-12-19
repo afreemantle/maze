@@ -1,0 +1,11 @@
+class test {
+    void main () {     
+        int y;
+        float z;
+        
+        y = 42;
+        z = 1.0;
+        y + z;
+
+    }
+}
