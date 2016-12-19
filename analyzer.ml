@@ -20,6 +20,10 @@ let check classes =
   (* Check for duplicate class names *)
   report_duplicate (fun n -> "Duplicate class name " ^ n) (List.map (fun n -> n.dname) classes);
 
+  let check_assign lvaluet rvaluet err =
+      if lvaluet == rvaluet then lvaluet else raise err
+  in
+
   (* Helper function for check_not_void *)
   let typ_of_datatype = function
       Arraytype(p, i) -> p
@@ -181,7 +185,8 @@ let check classes =
                       string_of_typ t1 ^ " " ^ string_of_op op ^ " " ^
                       string_of_typ t2 ^ " in " ^ string_of_expr e))
                 )
-              | Assign(var, e) -> Void
+              | Assign(var, e) as ex -> (*let lt = type_of_identifer var
+                                        and rt = expr e in*) Void
               | ObjCreate(oname, actuals) -> Void
               | ObjAccess(e1, e2) -> Void
               | Call(fname, actuals) -> Void
