@@ -153,7 +153,13 @@ let check classes =
               | String_Lit _ -> String
               | Noexpr -> Void
               | Null -> Null
-              | Unop(op, e) -> Bool     (* NEED TO FIX UNOP LATER *)
+              | Unop(op, e) as ex -> let t = expr e
+                in (match op with
+                  Neg when t = Int -> Int
+                | Not when t = Bool -> Bool
+                | _ -> raise (Failure ("illegal unary operator " ^
+                  string_of_uop op ^ string_of_typ t ^ " in " ^
+                  string_of_expr ex)))
               | Binop(e1, op, e2) as e -> let t1 = expr e1 and t2 = expr e2 
                 in (match op with
                   Add | Sub | Mult | Div when t1 = Int && t2 = Int -> Int
